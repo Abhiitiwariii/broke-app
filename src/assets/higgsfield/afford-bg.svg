@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920" fill="none">
+  <defs>
+    <pattern id="affordDots" width="34" height="34" patternUnits="userSpaceOnUse">
+      <circle cx="5" cy="5" r="3.2" fill="#12100E" fill-opacity="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="1080" height="1920" fill="#F4F1EA"/>
+  <rect width="1080" height="1920" fill="url(#affordDots)"/>
+  <!-- one soft red diagonal, top-right corner only -->
+  <polygon points="1080,0 1080,360 720,0" fill="#FF3B30" fill-opacity="0.14"/>
+  <!-- faint ink baseline sweep, bottom -->
+  <polygon points="0,1780 1080,1660 1080,1920 0,1920" fill="#12100E" fill-opacity="0.05"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Full-bleed red so the maskable safe zone (center 80%) always stays covered -->
+  <rect width="512" height="512" fill="#FF3B30"/>
+  <!-- Brutalist inner panel, kept within the maskable safe area -->
+  <g>
+    <rect x="86" y="86" width="340" height="340" rx="28" fill="#F4F1EA" stroke="#12100E" stroke-width="14"/>
+    <text x="256" y="298" font-family="'Arial Black', Arial, sans-serif" font-size="210" font-weight="900"
+          text-anchor="middle" fill="#12100E">?</text>
+    <text x="256" y="378" font-family="'Arial Black', Arial, sans-serif" font-size="54" font-weight="900"
+          letter-spacing="4" text-anchor="middle" fill="#FF3B30">BROKE?</text>
+  </g>
+</svg>

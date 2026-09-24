@@ -1,0 +1,484 @@
+1 notification
+Link copied to clipboard. View post.
+
+
+
+I'm looking for…
+
+
+Home
+My Network
+Jobs
+1
+Messaging
+Notifications
+
+
+Me
+
+For Business
+Advertise
+
+Premium
+
+Abhilash Tiwari
+Abhilash Tiwari
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+Bengaluru, Karnataka
+
+
+HSBC
+
+Profile viewers
+
+2,230
+
+Post impressions
+
+18,537
+
+Your Premium features
+
+Feed post
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+  • You
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+14h • 
+
+
+A friend called me last week. Software engineer, decent salary but confused about finances.
+
+"Abhilash, I want to buy a bike. ₹4 lakh. I already have EMIs running on my home loan and a personal loan. Can I afford this without wrecking my finances?"
+
+He wasn't asking if he wanted it. He was asking if the math worked. He didn't know.
+
+Most of us don't have a bad relationship with money. We have no snapshot of it. We know our salary. We don't know what it actually leaves us once every EMI and recurring cost is accounted for.
+
+So I built Broke.
+
+Enter your salary and existing EMIs, get a real answer on whether you can afford that bike, car, home, or even a career change. Not a vibe check. A calculation.
+
+It also has:
+
+Prepayment calculators showing exactly how much interest you save by paying early
+	
+Daily expense and investment logging, if you want the fuller picture
+
+The name is the point. Before you buy the thing, know if you're actually broke or not.
+
+Building this in public. Drop a comment if you want me to add something more in the app.
+
+#AIbuilder #BuilderPM #Productmanagement #finance
+
+View image
+
+48
+
+
+22
+
+3,964 impressions
+
+View analyticsView analytics
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Most relevant
+
+View Mayank Kulshrestha’s profile
+Mayank Kulshrestha Verified Profile 1stMayank Kulshrestha  • 1st
+
+Product Management | HCM · HR Tech · Payroll · CRM · B2B SaaS | AI-Powered Products · Enterprise Platforms · Roadmap Strategy
+
+10h
+
+
+Cool idea, would this be done before account creation or after? How are you planning to ensure privacy / security
+
+1 reaction1
+
+
+
+55
+
+See previous replies
+
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+Author
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+8h
+
+
+Mayank Kulshrestha makes sense 
+
+1 reaction1
+
+
+
+25 impressions25
+
+View nagamaheswara reddy’s profile
+nagamaheswara reddy  1stnagamaheswara reddy • 1st
+
+MBA in Product Management at HSB | AI, Analytics & FinTech | Building Technology-Driven Business Solutions
+
+8h
+
+
+Really like the idea. Two things I’m curious about:
+ If someone takes on an EMI based on their current salary and then loses their job, does the app have any safety check or emergency-buffer calculation to show whether they can still manage the EMI without becoming financially stressed?
+ As someone’s salary increases over time, does the recommended EMI/affordability limit increase accordingly, or is it based only on their current salary?
+Would be interesting to see the app factor in job-loss scenarios and future income changes as well.… more
+
+1 reaction1
+
+
+
+11
+
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+Author
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+8h
+
+
+nagamaheswara reddy interesting point. For now the app supports, you inputting a salary , and it coming up with an affordability limit, so job loss scenarios are excluded. But I will consider those to come up with a final version. 
+
+1 reaction1
+
+
+
+59 impressions59
+
+View Anmol Sahetya’s profile
+Anmol Sahetya Verified Profile 1stAnmol Sahetya  • 1st
+
+Product Manager at QuestionPro | Certified Product Owner (PSPO I, II)
+
+9h
+
+
+How about have fixed monthly expense total also dialled in?
+Salary 95k
+Existing EMI 12k
+Fixed Exps 70k 
+
+In this case as well the verdict would be that the the person would not be able to afford the new EMIs
+… more
+
+1 reaction1
+
+
+
+11
+
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+Author
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+8h
+
+
+Anmol Sahetya makes sense i didn’t keep expenses because they keep on changing but yes the fixed and variable ones could be segregated and used efficiently 
+
+0 
+
+
+
+39 impressions39
+
+View Mayank Pratap Singh’s profile
+Mayank Pratap Singh Premium Profile 1stMayank Pratap Singh  • 1st
+
+Driving Agile Delivery | Data & Digital Transformation Leader | $M SOW Wins | Agile Coach | 1600+ Hours Training Experience | Gen AI Advocate
+
+6h
+
+
+Looks interesting. Cheers 👍
+
+1 reaction1
+
+
+
+11
+
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+Author
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+6h
+
+
+Mayank Pratap Singh thanks
+
+0 
+
+
+
+15 impressions15
+
+View Mahesh Madhukar’s profile
+Mahesh Madhukar Verified Profile 1stMahesh Madhukar  • 1st
+
+Consultant | Ex Accenture Strategy | SPJain Alumnus
+
+12h
+
+
+beautiful idea!
+
+1 reaction1
+
+
+
+11
+
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+Author
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+12h
+
+
+Mahesh Madhukar thanks :)
+
+0 
+
+
+
+52 impressions52
+
+View Ameet Acharya’s profile
+Ameet Acharya Premium Profile FollowingAmeet Acharya  • Following
+
+Senior Product Manager@ Dell | Building AI chat products for 2M+ users | eCommerce | B2B & B2C | Retail | IIT Guwahati
+
+13h
+
+
+👍
+
+1 reaction1
+
+
+
+11
+
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+Author
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+13h
+
+
+Ameet Acharya 🙌
+
+0 
+
+
+
+73 impressions73
+
+View Tushar Dwivedi’s profile
+Tushar Dwivedi Premium Profile 1stTushar Dwivedi  • 1st
+
+Building Smritea.AI ||  Founder @ Bytonomics || NIT Surat || ex-Staff Engineer @ ThoughtSpot || ex-Rubrik, Microsoft, Myntra, Adobe
+
+12h
+
+
+For some calculations, it should say-
+"You mad bro...?? You are too damn broke for this stupidity"
+
+1 reaction1
+
+
+
+11
+
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+Author
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+11h
+
+
+Tushar Dwivedi Tushar Dwivedi interesting haha 🤣 or it might tell us to work harder and earn more 😂
+
+1 reaction1
+
+
+
+41 impressions41
+
+View Manyata Manocha’s profile
+Manyata Manocha Verified Profile 1stManyata Manocha  • 1st
+
+Product Manager in the Making | Due Diligence Researcher 
+
+14h
+
+
+Interesting
+
+1 reaction1
+
+
+
+11
+
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+Author
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+14h
+
+
+Manyata Manocha 🙌👍
+
+0 
+
+
+
+71 impressions71
+
+View Nivetha Sivakumar ✨’s profile
+Nivetha Sivakumar ✨ Premium Profile 3rd+Nivetha Sivakumar ✨  • 3rd+
+
+ServiceNow Developer at KeenStack | CSA | CAD certified
+
+55m
+
+Follow
+
+
+Cool Idea! I thought of building something similar but then I thought if I can just walk anywhere why need a bike? 🙂
+
+1 reaction1
+
+
+
+11
+
+View Abhilash Tiwari’s profile
+Abhilash Tiwari
+
+Author
+
+AVP HSBC | XLRI J| AI Product Management | AI Product Owner | Regulatory Reporting Banking | Data and Agentic AI PM
+
+27m
+
+
+Nivetha Sivakumar ✨ interesting take, on a lighter note, how about you buying one few years down the line?
+
+0 
+
+
+
+4 impressions4
+
+
+About
+
+Accessibility
+
+Help Center
+
+Privacy & Terms
+
+Ad Choices
+
+Advertising
+
+Business Services
+
+Get the LinkedIn app
+
+More
+
+LinkedIn Corporation © 2026
+
+Abhilash Tiwari
+MessagingYou are on the messaging overlay. Press enter to open the list of conversations.
+1
+
+Compose message
+You are on the messaging overlay. Press enter to open the list of conversations.
+Arihant Kumar Shounak
+Arihant Kumar Shounak
+Close your conversation with Abhilash Tiwari and Arihant Kumar Shounak
+Today
+Arihant Kumar Shounak sent the following messages at 12:24 AM
+View Arihant Kumar’s profileArihant Kumar Shounak
+Arihant Kumar Shounak  12:24 AM
+Ho Abhilash Tiwari,
+Thank you for adding me to your network.
+
+Looking forward to staying connected and learning from you.
+
+Scroll quick replies left
+Reply to conversation with “Likewise”
+Likewise
+Reply to conversation with “Likewise, Arihant Kumar ”
+Likewise, Arihant Kumar
+Reply to conversation with “It's my pleasure”
+It's my pleasure
+Scroll quick replies right
+
+
+Maximize compose field
+Attach an image to your conversation with Arihant Kumar Shounak
+Attach a file to your conversation with Arihant Kumar Shounak
+Open GIF Keyboard
+
+Open Emoji Keyboard
+Send
+Open send options
+
+Navigating to Notifications
