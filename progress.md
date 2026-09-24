@@ -422,3 +422,130 @@ User generated in the Higgsfield web app; I mapped/compressed with ffmpeg → sl
 ## Next
 - Supabase (step 7) still the remaining v3 item.
 - `share-bg` once text-cleaned. Optional: premium app-skin polish pass to match the renders.
+
+---
+---
+
+# ★★★ HANDOFF — CURRENT STATE & TOMORROW'S JOB (2026-09-24, end of day) ★★★
+
+**Read this first.** This is the definitive current state. Everything below supersedes older
+sections. **Gate is green: `npm test` = 64 passed, `npm run build` clean.**
+
+## ✅ SHIPPED
+- **Live on Vercel:** https://broke-app-five.vercel.app/ (200, auto-deploys on push to `main`).
+- **GitHub:** https://github.com/Abhiitiwariii/broke-app (public). `main` is the deploy branch.
+  `.gitignore` excludes `node_modules`, `dist`, `.vercel`, `*.tsbuildinfo`, and
+  `src/assets/higgsfield/_raw/` (57 MB of source renders — the compressed `.webp` slots ARE committed).
+- **Demo videos** (in `C:\Users\tabhi\Downloads\`, NOT in the repo): `broke-demo.mp4` (46s raw
+  walkthrough) and `broke-demo-final.mp4` (52s, with branded title + end card). Built entirely with
+  ffmpeg from a headless-Chrome/puppeteer capture (`_demo_capture.mjs`, deleted after each run).
+
+## ✅ FULL DARK PREMIUM REDESIGN (done this session)
+- **Dark-first theme** — `src/index.css` rewritten: `--color-bg/surface/card/elev/paper/ink/line`,
+  vignette, soft glows (no hard shadows), `.card`, `.scrim-b`, glow/pulse/shimmer utilities.
+- **Images featured in front** (user's key ask): Today = full-bleed cinematic card render hero;
+  verdict result = gem/trophy shown HUGE (framed hero, `ResultCard`); EscapePlan = full staircase
+  header; onboarding = cinematic hero. `isRealRender()` in `assets.ts` switches real renders →
+  framed-hero vs SVG stand-ins → texture.
+- **Pro fully removed** — no paywall, no PRO badge, no locks; everything free. `proContext.tsx`
+  forces `isProUnlocked: true` and no-op paywall (seam kept for later pricing). `PaywallSheet.tsx`
+  and `ProLock.tsx` are now **orphaned/unused** (safe to delete).
+- **lucide-react icons** everywhere (nav, tiles, buttons, section titles, check-in, Me). Kept the
+  🔥 emoji only for the streak flame.
+- **First-run onboarding** — `src/components/Onboarding.tsx` (income → fixed costs → "₹X/day"
+  reveal), shown by `App.tsx` when `getProfile().netMonthlyIncome <= 0`.
+- **Weekly trends** — inline SVG 7-day spend-vs-budget bars on `Me`.
+- **Micro-interactions** — `src/lib/ui.tsx` (`haptic()`, `useCountUp()`), springy verdict-gem
+  reveal, animated ring/score/streak, confetti/shake. Reduced-motion respected.
+- **PWA kept.**
+
+## Higgsfield art (6 of 7 slots are real WebP renders, <250 KB each)
+`today-hero` (card+flame), `afford-bg` (coins), `verdict-go` (trophy), `verdict-warn` (amber gem),
+`verdict-danger` (red gem+wallet), `escape-header` (violet staircase). **`share-bg` still SVG** —
+the trophy render has "$ AWESOME" garbled text; user to run the text-removal edit → drop
+`share-bg.webp`. Generation brief + prompts: `src/assets/higgsfield/BRIEF.md`.
+
+## Screen/file map (all dark, all converted)
+`App.tsx` (onboarding gate + router), `components/AppShell.tsx` (glass nav, lucide),
+`screens/Today.tsx`, `AffordCheck.tsx`, `DebtHealth.tsx`, `EscapePlan.tsx`, `Me.tsx`,
+`components/ResultCard.tsx`, `Onboarding.tsx`, `CheckInSheet.tsx`, `BrutalCard/Button.tsx`,
+`NumberField.tsx`, `ScoreDial.tsx`, `DailyWidgets.tsx`, `VerdictBadge.tsx`.
+`lib/`: `finance.ts` (+tests, 64), `daily.ts` (+tests), `storage.ts`, `tone.ts`, `ui.tsx`,
+`assets.ts`, `proContext.tsx`, `router.tsx`, `format.ts`, `share.ts`, `pro.ts` (seam).
+
+## Run commands (folder name has a space — keep quotes)
+```powershell
+cd "C:\Users\tabhi\Downloads\broke app"
+npm run dev      # http://localhost:5173
+npm test         # 64 green (finance + daily)
+npm run build    # tsc -b && vite build
+git push         # auto-deploys to Vercel
+```
+
+---
+
+# ▶ TOMORROW'S JOB — SUPABASE INTEGRATION (v3 step 7, the last v3 item)
+
+**Goal:** optional cloud sync so a user can SAVE their money data and get it back on any device.
+**Model = "mandatory-to-save (soft wall)":** the whole app stays 100% usable offline with NO account;
+login is required ONLY when the user wants to save/sync. localStorage stays the offline cache; on
+login we pull + merge, and push on change. **DO NOT break offline mode** — the app must run fine with
+no Supabase env vars and no logged-in user.
+
+## Locked decisions (from the v3 grilling, already in this file above)
+- **Backend:** Supabase (Auth + Postgres, free tier; Postgres is encrypted at rest).
+- **Auth methods:** Google OAuth + email magic link. Phone OTP deferred.
+- **What syncs:** `settings`, `checkins`, `streak`, and saved **afford scenarios** (history).
+  Local = offline cache; sync on login; last-write-wins per key is fine for v1.
+- **Privacy reframe (DPDP):** "Browse offline, free. Sign in to save — your saved data is encrypted,
+  we store minimal PII, and you can export/delete any time." Update the Me privacy card copy.
+
+## Build order (test-first where it makes sense; keep finance/daily/tests untouched)
+1. **Supabase project** → copy Project URL + anon key. Add to `.env.local`:
+   `VITE_SUPABASE_URL=...`, `VITE_SUPABASE_ANON_KEY=...`. Also add both to **Vercel → Project →
+   Settings → Environment Variables** (Production + Preview), then redeploy.
+2. `npm i @supabase/supabase-js`.
+3. **`src/lib/supabase.ts`** — create client from `import.meta.env`. **Guard missing env → export
+   `null`** so the app still builds/runs offline when keys aren't set. `export const supabase =
+   (url && key) ? createClient(url, key) : null`.
+4. **DB schema** (SQL in Supabase editor): table `profiles_data (user_id uuid pk references
+   auth.users, data jsonb, updated_at timestamptz default now())`. One JSON blob per user holding
+   `{ profile, settings, streak, checkins, history }`. **Enable RLS**; policies: `user_id =
+   auth.uid()` for select/insert/update. (Simple v1; can normalize into tables later.)
+5. **Auth UI** — enable Google provider + Email (magic link) in Supabase dashboard (Google needs
+   OAuth client id/secret + the Vercel redirect URL). Add a small sign-in sheet reachable from `Me`
+   ("Sign in to save") using `supabase.auth.signInWithOAuth({provider:'google'})` and
+   `signInWithOtp({email})`. Handle the redirect/callback (Supabase detects the URL hash on load).
+6. **Sync layer — `src/lib/sync.ts`:**
+   - `pullRemote()` on auth state change (login) → fetch row → **merge into local** (prefer the
+     newer `updated_at`; for v1, remote overwrites local on first login, then local is source).
+   - `pushRemote()` debounced (~1.5s) after any storage write when authed → upsert the JSON blob.
+   - Wrap the existing `storage.ts` setters (or subscribe to a change event) so writes trigger a push.
+   - Everything must no-op gracefully when `supabase == null` or signed out.
+7. **Wire into `Me`:** auth status (signed-in email / sign out), a "Synced ✓ / offline" chip, and the
+   updated privacy copy. Keep Export/Delete; delete should also offer to delete the cloud row.
+8. **Gate:** `npm test` still 64 green (finance/daily untouched), `npm run build` clean, then
+   manually test: sign in with Google → data uploads → clear localStorage → reload → sign in →
+   data comes back. Then `git push` (Vercel env vars must be set or the build's client is null =
+   offline, which is fine).
+
+## Guardrails (do not cross)
+- **Offline-first is sacred:** no crash / no blank screen when Supabase env is missing or user is
+  signed out. Everything degrades to the current localStorage behaviour.
+- **No changes** to `finance.ts` / `daily.ts` / their tests / the finance data model.
+- **Secrets:** only the anon key goes in client env (safe by design + RLS). Never commit `.env.local`
+  (already covered by `*.local` in `.gitignore`).
+- Don't claim done without the test + build gate passing and a real sign-in round-trip verified.
+
+## Also still open (smaller, after Supabase or in parallel)
+- `share-bg.webp` (text-cleaned trophy render).
+- Delete orphaned `PaywallSheet.tsx` / `ProLock.tsx`.
+- Optional: `vercel.json` (SPA rewrite + long-cache headers for `/assets`).
+- Optional polish: wire `useCountUp` into the big numbers; captions/alt cuts of the demo video.
+- Deferred (unchanged): Razorpay/UPI, real affiliate partners, future-income growth (feedback item C).
+
+## How to resume tomorrow
+Open Claude Code in `C:\Users\tabhi\Downloads\broke app` and say:
+*"Resume from progress.md → TOMORROW'S JOB. Build the Supabase integration (offline-first,
+mandatory-to-save soft wall). Here are my Supabase URL + anon key: <paste>."*
+(Or set them yourself in `.env.local` + Vercel first and just say "Supabase keys are set, build it.")
