@@ -486,11 +486,34 @@ git push         # auto-deploys to Vercel
 
 # ▶ TOMORROW'S JOB — SUPABASE INTEGRATION (v3 step 7, the last v3 item)
 
-**Goal:** optional cloud sync so a user can SAVE their money data and get it back on any device.
-**Model = "mandatory-to-save (soft wall)":** the whole app stays 100% usable offline with NO account;
-login is required ONLY when the user wants to save/sync. localStorage stays the offline cache; on
-login we pull + merge, and push on change. **DO NOT break offline mode** — the app must run fine with
-no Supabase env vars and no logged-in user.
+**Goal:** Google sign-in + cloud sync so a user's money data persists across devices.
+
+### ⚑ REVISED FLOW (user update, 2026-09-24 eve) — this OVERRIDES the older "optional login" model
+The app now **gates on login after onboarding** (Google is required to continue — no anonymous use).
+Exact sequence:
+1. **Onboarding questions FIRST (no login yet)** — collect:
+   - **Salary (post-tax / take-home)** — required.
+   - **Savings target** — a **toggle: percentage (%) OR ₹ amount**. User picks either; store the mode.
+   - Keep **fixed monthly expenses** (needed for the afford math + daily allowance) — one more field.
+   - Then the "you can spend ₹X/day" reveal (already built).
+2. **Login wall** — a screen: "Sign in with Google to save your plan & continue." User **must**
+   `signInWithOAuth({ provider: 'google' })` to proceed into the app.
+3. **On successful sign-in** — write the onboarding answers to Supabase (and local cache), then enter
+   the app on Today.
+- **Tradeoff to be aware of:** every user must have a Google account; there is no offline/anonymous
+  path anymore. (If we later want a "try without account" mode, it's a small change — the seam stays.)
+- **Dev fallback:** if Supabase env vars are missing (local dev without keys), don't hard-crash —
+  show the login screen but allow a "skip (dev only)" that proceeds locally, so the app is still
+  buildable/runnable without keys. Never ship that skip to prod.
+
+### Savings %-or-amount detail (keep finance/daily untouched)
+`dailyAllowance()` in `daily.ts` already takes `savingsGoalPct` and is TESTED — **do not change it.**
+Instead convert at the input layer: if the user chose an amount, compute
+`savingsGoalPct = round(savingsAmount / salary * 100)` before calling `dailyAllowance`. Store both
+`savingsMode: 'percent' | 'amount'` and the raw value in `settings` (additive, backward-compatible,
+like we did for `roastTone`). UI shows whichever the user picked; math always uses the derived pct.
+
+localStorage stays the on-device cache; on login we pull + merge and push on change.
 
 ## Locked decisions (from the v3 grilling, already in this file above)
 - **Backend:** Supabase (Auth + Postgres, free tier; Postgres is encrypted at rest).
@@ -512,27 +535,35 @@ no Supabase env vars and no logged-in user.
    auth.users, data jsonb, updated_at timestamptz default now())`. One JSON blob per user holding
    `{ profile, settings, streak, checkins, history }`. **Enable RLS**; policies: `user_id =
    auth.uid()` for select/insert/update. (Simple v1; can normalize into tables later.)
-5. **Auth UI** — enable Google provider + Email (magic link) in Supabase dashboard (Google needs
-   OAuth client id/secret + the Vercel redirect URL). Add a small sign-in sheet reachable from `Me`
-   ("Sign in to save") using `supabase.auth.signInWithOAuth({provider:'google'})` and
-   `signInWithOtp({email})`. Handle the redirect/callback (Supabase detects the URL hash on load).
+5. **Auth + the login gate (see REVISED FLOW above)** — enable the **Google** provider in Supabase
+   (needs a Google Cloud OAuth client id/secret + the redirect URL:
+   `https://broke-app-five.vercel.app` and `http://localhost:5173` for dev). Rework
+   `src/components/Onboarding.tsx`: keep steps 1–2 (now with the salary + savings %/₹ toggle + fixed
+   expenses), then add a **step 3 = login wall** with a "Continue with Google" button
+   (`supabase.auth.signInWithOAuth({ provider:'google' })`). `App.tsx` gate becomes: show app only
+   when there's a Supabase session; otherwise show Onboarding→login. Handle the OAuth redirect on
+   load (`supabase.auth.getSession()` / `onAuthStateChange`). Email magic link is optional/secondary.
 6. **Sync layer — `src/lib/sync.ts`:**
    - `pullRemote()` on auth state change (login) → fetch row → **merge into local** (prefer the
      newer `updated_at`; for v1, remote overwrites local on first login, then local is source).
    - `pushRemote()` debounced (~1.5s) after any storage write when authed → upsert the JSON blob.
    - Wrap the existing `storage.ts` setters (or subscribe to a change event) so writes trigger a push.
    - Everything must no-op gracefully when `supabase == null` or signed out.
-7. **Wire into `Me`:** auth status (signed-in email / sign out), a "Synced ✓ / offline" chip, and the
-   updated privacy copy. Keep Export/Delete; delete should also offer to delete the cloud row.
+7. **Wire into `Me`:** auth status (signed-in Google email + avatar, **Sign out**), a "Synced ✓"
+   chip, and updated privacy copy — since login is now required, say "Signed in with Google · your
+   data is encrypted at rest · minimal PII · export or delete any time" (drop the "runs fully offline,
+   no account" line). Keep Export/Delete; **Delete must also delete the cloud row** and sign out.
 8. **Gate:** `npm test` still 64 green (finance/daily untouched), `npm run build` clean, then
    manually test: sign in with Google → data uploads → clear localStorage → reload → sign in →
    data comes back. Then `git push` (Vercel env vars must be set or the build's client is null =
    offline, which is fine).
 
 ## Guardrails (do not cross)
-- **Offline-first is sacred:** no crash / no blank screen when Supabase env is missing or user is
-  signed out. Everything degrades to the current localStorage behaviour.
-- **No changes** to `finance.ts` / `daily.ts` / their tests / the finance data model.
+- **Login is now required after onboarding** (per REVISED FLOW) — but the build must not hard-crash
+  when Supabase env vars are missing: show the login screen with a dev-only "skip" that proceeds on
+  local cache (never enabled in prod). Signed-in = source of truth; localStorage = cache.
+- **No changes** to `finance.ts` / `daily.ts` / their tests / the finance data model. (Savings as a
+  ₹ amount is converted to a % at the input layer — never edit `dailyAllowance`.)
 - **Secrets:** only the anon key goes in client env (safe by design + RLS). Never commit `.env.local`
   (already covered by `*.local` in `.gitignore`).
 - Don't claim done without the test + build gate passing and a real sign-in round-trip verified.
