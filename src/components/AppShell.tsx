@@ -19,10 +19,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Top bar */}
       <header className="z-20 flex items-center justify-between border-b border-line bg-bg/70 px-4 py-2.5 backdrop-blur-xl">
         <button type="button" onClick={() => navigate('today')} className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-danger font-display text-lg font-black text-paper shadow-[0_0_18px_-2px_var(--color-danger)]">
+          <span className="brand-fill glow-brand flex h-8 w-8 items-center justify-center rounded-[10px] font-display text-lg font-black text-white">
             ?
           </span>
-          <span className="font-display text-xl font-black tracking-tight">Broke?</span>
+          <span className="grad-text font-display text-xl font-black tracking-tight">Broke?</span>
         </button>
       </header>
 

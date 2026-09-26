@@ -22,7 +22,7 @@ export function StreakFlame({
         🔥
       </motion.span>
       <div className="leading-none">
-        <div className="font-display text-3xl font-black tabular-nums">{count}</div>
+        <div className="num text-3xl font-bold tabular-nums">{count}</div>
         <div className="font-display text-[10px] font-black uppercase tracking-wider opacity-60">
           day streak
         </div>
@@ -92,12 +92,12 @@ export function AllowanceRing({
               {over ? 'over by' : 'left today'}
             </span>
             <span
-              className="font-display text-3xl font-black tabular-nums"
+              className="num text-4xl font-bold tabular-nums"
               style={{ color: over ? 'var(--color-danger)' : 'var(--color-paper)' }}
             >
               {inr(Math.abs(remaining))}
             </span>
-            <span className="font-display text-[11px] font-bold opacity-55">
+            <span className="num text-[11px] font-medium opacity-55">
               of {inr(allowance)}/day
             </span>
           </>

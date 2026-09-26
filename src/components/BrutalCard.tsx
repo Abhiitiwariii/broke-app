@@ -8,15 +8,7 @@ interface Props extends HTMLMotionProps<'div'> {
   entrance?: boolean
 }
 
-// Soft depth for dark UI (no more hard offset shadows).
-const SHADOW = {
-  sm: 'shadow-[0_10px_24px_-18px_#000]',
-  md: 'shadow-[0_18px_38px_-22px_#000]',
-  lg: 'shadow-[0_26px_54px_-24px_#000]',
-  pop: 'shadow-[0_0_44px_-12px_var(--color-pop)]',
-}
-
-/** Elevated dark card with a hairline border and soft depth. */
+/** Elevated card with the shared `.card` finish (gradient + inner highlight + depth). */
 export function BrutalCard({
   children,
   color = 'bg-card',
@@ -25,17 +17,15 @@ export function BrutalCard({
   className = '',
   ...rest
 }: Props) {
+  void shadow
+  // `bg-card` (default) → the .card finish; a real color override keeps its own bg.
+  const base = color === 'bg-card' ? 'card' : `rounded-[22px] border border-line ${color}`
   return (
     <motion.div
       initial={entrance ? { opacity: 0, y: 18, scale: 0.98 } : false}
       animate={entrance ? { opacity: 1, y: 0, scale: 1 } : undefined}
       transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-      className={[
-        'rounded-[18px] border border-line',
-        SHADOW[shadow],
-        color,
-        className,
-      ].join(' ')}
+      className={[base, className].join(' ')}
       {...rest}
     >
       {children}

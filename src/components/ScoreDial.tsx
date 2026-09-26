@@ -79,7 +79,7 @@ export function ScoreDial({ score, size = 220 }: Props) {
           initial={{ scale: 0.7, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-          className="font-display text-6xl font-black tabular-nums"
+          className="num text-6xl font-bold tabular-nums"
         >
           {clamped}
         </motion.span>

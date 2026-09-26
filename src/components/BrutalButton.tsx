@@ -4,14 +4,14 @@ import type { ReactNode } from 'react'
 type Variant = 'ink' | 'go' | 'warn' | 'danger' | 'pop' | 'paper'
 type Size = 'sm' | 'md' | 'lg'
 
-// On the dark canvas the primary CTA ("ink") is a high-contrast light button.
+// Primary CTA ("ink") is the signature red→violet gradient with a neon glow.
 const VARIANT: Record<Variant, string> = {
-  ink: 'bg-paper text-ink shadow-[0_10px_30px_-10px_#ffffff55]',
+  ink: 'brand-fill text-white glow-brand',
   paper: 'bg-elev text-paper border border-line',
   go: 'bg-go text-ink shadow-[0_10px_34px_-12px_var(--color-go)]',
   warn: 'bg-warn text-ink shadow-[0_10px_34px_-12px_var(--color-warn)]',
   danger: 'bg-danger text-paper shadow-[0_10px_34px_-12px_var(--color-danger)]',
-  pop: 'bg-pop text-white shadow-[0_10px_34px_-12px_var(--color-pop)]',
+  pop: 'brand-fill text-white glow-brand',
 }
 
 const SIZE: Record<Size, string> = {

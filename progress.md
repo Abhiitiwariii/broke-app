@@ -580,3 +580,44 @@ Open Claude Code in `C:\Users\tabhi\Downloads\broke app` and say:
 *"Resume from progress.md → TOMORROW'S JOB. Build the Supabase integration (offline-first,
 mandatory-to-save soft wall). Here are my Supabase URL + anon key: <paste>."*
 (Or set them yourself in `.env.local` + Vercel first and just say "Supabase keys are set, build it.")
+
+---
+---
+
+# ★ NEON-LUXE REDESIGN + HIGGSFIELD MCP (2026-09-26)
+
+## Design system overhaul — SHIPPED (build clean, 64 tests green)
+Direction (locked via grilling): **neon-hyped × CRED-grade polish — sharp, never dull, distinctive.**
+- **`src/index.css` rebuilt:** refined near-black palette (`--color-bg #08080c`, real surface/elev grays),
+  **signature red→violet gradient** (`--color-brand1/2`, `.grad-text`, `.brand-fill`, `.glow-brand`),
+  aurora hero backdrop (`.hero-mesh` + `.grain`), neon verdict glows, `.card` finish (gradient +
+  inner top-highlight + depth), gradient range sliders, animated wordmark (`.grad-anim`).
+- **Space Grotesk numeric font** (`--font-num`, `.num`) on all big numbers (ring, score, money, stats).
+  Added to `index.html` Google Fonts.
+- **Primary CTA = the gradient neon button** (`BrutalButton` variant `ink`/`pop` → `brand-fill glow-brand`).
+- **Today hero redesigned** — dropped the messy full-bleed render; now a designed **aurora + gradient
+  wordmark + allowance ring** as the stars (fixes the "background not neat" complaint). AI renders are
+  reserved for reward moments (verdict gems, escape header).
+- All screens inherit the polish via the shared `.card` / `.num` / button classes. Verified on Today,
+  AffordCheck, DebtHealth (49/100 amber-glow dial), EscapePlan (gradient toggles/slider, grotesk ₹).
+
+## Higgsfield MCP — CONNECTED (2026-09-26)
+- Registered in Claude Code **user config** (`~/.claude.json`): server `higgsfield` →
+  `https://mcp.higgsfield.ai/mcp` (Streamable HTTP). **No API key** — OAuth via Higgsfield account,
+  uses plan **credits**. 30+ models (Soul, Seedream, Flux, Kling, Veo…).
+- **To activate:** user runs `/mcp` → higgsfield → Authenticate (browser), then **restarts Claude
+  Code** (MCP loads at startup — not available in the session where it was added).
+
+## ▶ NEXT (once MCP is authed + Claude Code restarted): regenerate ALL visuals in the neon style
+Use the Higgsfield MCP directly (no more manual web-app export/drop) to regenerate the 6 slot assets
+so they match the neon-luxe look, then wire them in. **Neon art direction (base prompt):**
+> Ultra-premium 3D product render on pure black, neon-luxe fintech: glossy objects lit by a red→violet
+> gradient glow (hot-pink #ff3b6b → electric violet #8b5cff), rim light, volumetric haze, subtle bloom,
+> gold ₹ rupee coins, cinematic depth of field, 8k octane render, sharp edges. Single hero object,
+> lots of empty black space. No text, letters, numbers, or logos.
+Per-slot subjects unchanged (today-hero card+flame ring / verdict gems / trophy / staircase / coins),
+but recolour to the red→violet neon palette. Then: compress to webp <250 KB, drop as slot names
+(`assets.ts` picks raster over the SVG stand-ins), retune overlay opacity per screen, gate + push.
+
+Also still open: Supabase (login-gated onboarding — see section above), `share-bg`, delete orphaned
+`PaywallSheet.tsx`/`ProLock.tsx`, optional `vercel.json`.
