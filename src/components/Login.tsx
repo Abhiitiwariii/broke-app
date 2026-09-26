@@ -1,0 +1,89 @@
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { signInWithGoogle, isSupabaseConfigured } from '../lib/supabase'
+import { track } from '../lib/analytics'
+
+const isLocalhost =
+  typeof window !== 'undefined' && /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
+
+/** Login wall: Google OAuth. Shown after onboarding, before the app. */
+export function Login({ onSkip }: { onSkip: () => void }) {
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function google() {
+    setError(null); setBusy(true)
+    try {
+      track('login_started', { method: 'google' })
+      await signInWithGoogle() // full-page redirect
+    } catch {
+      setError('Could not start Google sign-in. Try again.')
+      setBusy(false)
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-bg p-5"
+      style={{ backgroundImage: 'radial-gradient(#16130e 0.5px, transparent 0.6px)', backgroundSize: '3px 3px' }}
+    >
+      <div className="w-full max-w-[380px]">
+        {/* Masthead */}
+        <div className="grad-text font-display text-[52px] font-black uppercase leading-[0.82]">
+          Broke<span className="text-danger">?</span>
+        </div>
+        <div className="mt-1.5 num text-[10px] font-bold uppercase tracking-[0.16em] text-paper/60">
+          Sign in to save your plan
+        </div>
+        <div className="rule-thick mt-3" />
+
+        <div className="card mt-5 p-5">
+          <span className="tag tag--danger">Members only</span>
+          <h1 className="mt-3 text-2xl font-black uppercase leading-tight">One account. Your money, saved.</h1>
+          <p className="mt-2 text-sm font-semibold text-paper/60">
+            Your plan syncs securely so it's there on every device.
+          </p>
+
+          {/* Google */}
+          <button
+            type="button"
+            onClick={google}
+            disabled={busy}
+            className="mt-5 flex w-full items-center justify-center gap-2 border-[1.5px] border-paper bg-elev px-5 py-4 font-display font-black uppercase tracking-tight shadow-[3px_3px_0_0_var(--color-paper)] disabled:opacity-40"
+          >
+            <GoogleG /> {busy ? 'Redirecting…' : 'Continue with Google'}
+          </button>
+
+          {error && <p className="mt-3 text-center text-xs font-black uppercase text-danger">{error}</p>}
+        </div>
+
+        <p className="mt-4 px-1 text-[11px] font-semibold leading-snug text-paper/50">
+          Minimal PII · encrypted at rest · export or delete anytime. Anonymous usage analytics help us improve — turn them off in <b>Me</b>.
+        </p>
+
+        {(!isSupabaseConfigured || isLocalhost) && (
+          <button
+            type="button"
+            onClick={onSkip}
+            className="mt-3 w-full font-display text-[11px] font-bold uppercase tracking-wide text-paper/40 underline"
+          >
+            Skip for now (dev only)
+          </button>
+        )}
+      </div>
+    </motion.div>
+  )
+}
+
+function GoogleG() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+    </svg>
+  )
+}

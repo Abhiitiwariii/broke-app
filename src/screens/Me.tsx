@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Flame, Trophy, Shield, Download, Smartphone, Smile, Angry } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Flame, Trophy, Shield, Download, Smartphone, Smile, Angry, LogOut, BarChart3 } from 'lucide-react'
 import {
   getSettings,
   setSettings,
@@ -13,6 +13,10 @@ import {
 import type { RoastTone } from '../lib/tone'
 import { dailyAllowance, spentOn, todayKey } from '../lib/daily'
 import { inr } from '../lib/format'
+import { Milestones } from '../components/Milestones'
+import { supabase, isSupabaseConfigured, signOut } from '../lib/supabase'
+import { isOptedOut, setAnalyticsOptOut, resetAnalytics, analyticsConfigured } from '../lib/analytics'
+import { stopSync, deleteRemote } from '../lib/sync'
 
 function last7Keys(): string[] {
   const out: string[] = []
@@ -28,6 +32,22 @@ export function Me() {
   const streak = getStreak()
   const [goal, setGoal] = useState(getSettings().savingsGoalPct)
   const [tone, setTone] = useState<RoastTone>(getSettings().roastTone)
+  const [optOut, setOptOut] = useState(isOptedOut())
+  const [account, setAccount] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!supabase) return
+    supabase.auth.getUser().then(({ data }) => {
+      setAccount(data.user?.email ?? data.user?.phone ?? null)
+      setUserId(data.user?.id ?? null)
+    })
+  }, [])
+
+  function updateOptOut(v: boolean) { setOptOut(v); setAnalyticsOptOut(v) }
+  async function handleSignOut() {
+    stopSync(); await signOut(); resetAnalytics(); window.location.reload()
+  }
 
   const profile = getProfile()
   const debts = getDebts()
@@ -51,8 +71,11 @@ export function Me() {
     } catch { window.alert('Could not export right now. Try again.') }
   }
 
-  function resetAll() {
-    if (!window.confirm('Wipe all your Broke? data on this device? This cannot be undone.')) return
+  async function resetAll() {
+    if (!window.confirm('Wipe all your Broke? data — on this device and in the cloud? This cannot be undone.')) return
+    stopSync()
+    if (userId) await deleteRemote(userId)
+    await signOut()
     deleteAllData()
     window.location.reload()
   }
@@ -70,6 +93,9 @@ export function Me() {
         <div className="h-10 w-px bg-white/10" />
         <Stat Icon={Trophy} big={streak.longest} label="Longest ever" tint="text-warn" />
       </div>
+
+      {/* Streak milestones */}
+      <Milestones current={streak.current} longest={streak.longest} />
 
       {/* Weekly trends */}
       <div className="card p-5">
@@ -119,18 +145,56 @@ export function Me() {
         </div>
       </div>
 
+      {/* Account */}
+      {isSupabaseConfigured && (
+        <div className="card p-5">
+          <div className="flex items-center gap-2 font-display text-sm font-black uppercase tracking-tight text-paper">
+            <Shield className="h-4 w-4 text-go" /> Account
+          </div>
+          <p className="mt-1 num text-xs font-bold text-paper/60">{account ?? 'Signed in'}</p>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="mt-3 inline-flex items-center gap-1.5 font-display text-xs font-black uppercase tracking-wide text-danger"
+          >
+            <LogOut className="h-3.5 w-3.5" /> Sign out
+          </button>
+        </div>
+      )}
+
       {/* Privacy */}
       <div className="card p-5">
         <div className="flex items-center gap-2 font-display text-sm font-black uppercase tracking-tight text-paper">
-          <Shield className="h-4 w-4 text-go" /> Your data stays on your phone
+          <Shield className="h-4 w-4 text-go" /> Your data
         </div>
         <p className="mt-1 text-xs font-semibold text-paper/60">
-          Broke? runs fully on this device — no account, no server, nothing uploaded. Export a copy or wipe it any time.
+          Browse free. Sign in to save — we keep minimal PII, encrypt it at rest, and you can export or delete everything any time.
         </p>
         <button type="button" onClick={exportData} className="mt-3 inline-flex items-center gap-1.5 font-display text-xs font-black uppercase tracking-wide text-pop">
           <Download className="h-3.5 w-3.5" /> Export my data (JSON)
         </button>
       </div>
+
+      {/* Anonymous analytics */}
+      {analyticsConfigured && (
+        <div className="card p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 font-display text-sm font-black uppercase tracking-tight text-paper">
+              <BarChart3 className="h-4 w-4 text-pop" /> Anonymous analytics
+            </div>
+            <button
+              type="button"
+              onClick={() => updateOptOut(!optOut)}
+              className={['border-[1.5px] border-paper px-3 py-1 font-display text-[11px] font-black uppercase', !optOut ? 'bg-go text-white' : 'bg-elev text-paper/55'].join(' ')}
+            >
+              {optOut ? 'Off' : 'On'}
+            </button>
+          </div>
+          <p className="mt-1 text-xs font-semibold text-paper/60">
+            Event counts help us improve Broke?. No salary, balances or amounts are ever sent.
+          </p>
+        </div>
+      )}
 
       {/* Install hint */}
       <div className="card p-4">

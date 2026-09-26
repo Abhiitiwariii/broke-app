@@ -2,62 +2,69 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BrutalButton } from './BrutalButton'
 import { NumberField } from './NumberField'
-import { asset } from '../lib/assets'
 import { getProfile, setProfile, getSettings, setSettings } from '../lib/storage'
 import { dailyAllowance } from '../lib/daily'
 import { inr } from '../lib/format'
 import { haptic } from '../lib/ui'
 
 type Num = number | ''
+type SavingsMode = 'percent' | 'amount'
 const val = (n: Num) => (n === '' ? 0 : n)
+const clampPct = (n: number) => Math.max(0, Math.min(90, Math.round(n)))
 
-/** Lightweight first-run: get income → costs → land on the daily number. */
+/** First-run: salary → fixed costs + savings target (% or ₹) → daily number. */
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0)
   const [income, setIncome] = useState<Num>('')
   const [fixed, setFixed] = useState<Num>('')
   const [goal, setGoal] = useState(getSettings().savingsGoalPct)
+  const [mode, setMode] = useState<SavingsMode>('percent')
+  const [amount, setAmount] = useState<Num>('')
 
-  const allowance = dailyAllowance(val(income), 0, goal)
-  const hero = asset('today-hero')
+  // math always runs on a %; a ₹ amount is converted here, never in daily.ts
+  const effectivePct =
+    mode === 'amount' && val(income) > 0 ? clampPct((val(amount) / val(income)) * 100) : goal
+  const allowance = dailyAllowance(val(income), 0, effectivePct)
 
   function finish() {
     haptic(18)
     setProfile({ ...getProfile(), netMonthlyIncome: val(income), fixedExpenses: val(fixed) })
-    setSettings({ savingsGoalPct: goal })
+    setSettings({
+      savingsGoalPct: effectivePct,
+      savingsMode: mode,
+      savingsAmount: mode === 'amount' ? val(amount) : 0,
+    })
     onDone()
   }
 
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col bg-bg">
-      {/* hero */}
-      <div className="relative h-[38vh] min-h-[220px] w-full overflow-hidden">
-        {hero ? (
-          <img src={hero} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
-        ) : (
-          <div className="halftone absolute inset-0" />
-        )}
-        <div className="scrim-b absolute inset-0" />
-        <div className="absolute inset-x-0 bottom-0 p-6">
-          <div className="font-display text-5xl font-black leading-none">
-            Broke<span className="text-danger">?</span>
-          </div>
-          <p className="mt-1 font-display font-bold text-paper/70">find out before you are.</p>
+    <div
+      className="fixed inset-0 z-[200] flex flex-col bg-bg"
+      style={{ backgroundImage: 'radial-gradient(#16130e 0.5px, transparent 0.6px)', backgroundSize: '3px 3px' }}
+    >
+      {/* Masthead */}
+      <div className="px-6 pt-8">
+        <div className="grad-text font-display text-[52px] font-black uppercase leading-[0.82]">
+          Broke<span className="text-danger">?</span>
         </div>
+        <div className="mt-1.5 num text-[10px] font-bold uppercase tracking-[0.16em] text-paper/60">
+          Find out before you are
+        </div>
+        <div className="rule-thick mt-3" />
       </div>
 
       <div className="flex flex-1 flex-col px-6 pt-6">
-        <div className="mb-4 flex gap-1.5">
+        <div className="mb-5 flex gap-1.5">
           {[0, 1, 2].map((i) => (
-            <div key={i} className={['h-1.5 flex-1 rounded-full', i <= step ? 'bg-pop' : 'bg-white/10'].join(' ')} />
+            <div key={i} className={['h-1.5 flex-1', i <= step ? 'bg-danger' : 'bg-paper/15'].join(' ')} />
           ))}
         </div>
 
         <AnimatePresence mode="wait">
           {step === 0 && (
             <Panel key="s0">
-              <h2 className="text-3xl font-black leading-tight">First — what lands in your account each month?</h2>
-              <p className="mt-2 font-display font-bold text-paper/55">Take-home pay, after tax. We never send this anywhere — it stays on your phone.</p>
+              <h2 className="text-3xl font-black uppercase leading-tight">First — what lands in your account each month?</h2>
+              <p className="mt-2 font-display font-bold text-paper/55">Take-home pay, after tax.</p>
               <div className="mt-5">
                 <NumberField label="Net monthly income" value={income} onChange={setIncome} />
               </div>
@@ -71,15 +78,33 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
 
           {step === 1 && (
             <Panel key="s1">
-              <h2 className="text-3xl font-black leading-tight">What's already spoken for?</h2>
-              <p className="mt-2 font-display font-bold text-paper/55">Rent, food, bills, subscriptions — the money gone before you decide anything.</p>
-              <div className="mt-5 flex flex-col gap-4">
-                <NumberField label="Fixed monthly expenses" value={fixed} onChange={setFixed} hint="Rough is fine — you can change it later." />
+              <h2 className="text-3xl font-black uppercase leading-tight">What's already spoken for?</h2>
+              <p className="mt-2 font-display font-bold text-paper/55">Rent, food, bills, subscriptions — gone before you decide anything.</p>
+              <div className="mt-5 flex flex-col gap-5">
+                <NumberField label="Fixed monthly expenses" value={fixed} onChange={setFixed} hint="Rough is fine — change it later." />
+
                 <div>
-                  <div className="mb-1 flex items-center justify-between font-display text-xs font-extrabold uppercase text-paper/60">
-                    Savings goal <span className="text-pop">{goal}%</span>
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="font-display text-xs font-black uppercase tracking-wide text-paper/60">Savings goal</span>
+                    <div className="flex border-[1.5px] border-paper">
+                      <ModeBtn active={mode === 'percent'} onClick={() => setMode('percent')} label="%" />
+                      <ModeBtn active={mode === 'amount'} onClick={() => setMode('amount')} label="₹" />
+                    </div>
                   </div>
-                  <input type="range" min={0} max={50} step={5} value={goal} onChange={(e) => setGoal(Number(e.target.value))} className="w-full" />
+
+                  {mode === 'percent' ? (
+                    <>
+                      <div className="mb-1 text-right font-display text-lg font-black text-danger">{goal}%</div>
+                      <input type="range" min={0} max={50} step={5} value={goal} onChange={(e) => setGoal(Number(e.target.value))} className="w-full" />
+                    </>
+                  ) : (
+                    <>
+                      <NumberField label="" value={amount} onChange={setAmount} hint="Amount to set aside each month." />
+                      {val(income) > 0 && val(amount) > 0 && (
+                        <p className="mt-1 num text-xs font-bold text-paper/55">≈ {effectivePct}% of your income</p>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
               <div className="mt-auto pt-6">
@@ -96,7 +121,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                   initial={{ scale: 0.7, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring', stiffness: 260, damping: 16 }}
-                  className="my-2 font-display text-6xl font-black text-go"
+                  className="num my-2 text-6xl font-bold text-go"
                 >
                   {inr(allowance)}
                 </motion.div>
@@ -113,6 +138,18 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         </AnimatePresence>
       </div>
     </div>
+  )
+}
+
+function ModeBtn({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={['px-3 py-1 font-display text-sm font-black uppercase', active ? 'bg-paper text-ink' : 'bg-elev text-paper/55'].join(' ')}
+    >
+      {label}
+    </button>
   )
 }
 

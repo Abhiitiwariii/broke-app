@@ -9,13 +9,13 @@ import { VerdictBadge } from './VerdictBadge'
 import { Confetti } from './Confetti'
 import { ShareCard } from './ShareCard'
 import { shareImage } from '../lib/share'
-import { asset, isRealRender } from '../lib/assets'
 import { haptic } from '../lib/ui'
+import { track } from '../lib/analytics'
 
 const VERDICT_LINE: Record<Verdict, string> = {
-  go: 'I can afford it 🟢',
-  warn: 'I should think twice 🟡',
-  danger: "I'm broke for this 🔴",
+  go: 'APPROVED ✅',
+  warn: 'THINK TWICE ⚠️',
+  danger: 'DECLINED ⛔',
 }
 
 interface Props {
@@ -29,15 +29,9 @@ interface Props {
   cibilBand: CibilBand
 }
 
-const GLOW: Record<Verdict, string> = { go: 'glow-go', warn: 'glow-warn', danger: 'glow-danger' }
 const ACCENT: Record<Verdict, string> = { go: 'text-go', warn: 'text-warn', danger: 'text-danger' }
-const ART_SLOT: Record<Verdict, string> = {
-  go: 'verdict-go',
-  warn: 'verdict-warn',
-  danger: 'verdict-danger',
-}
 
-/** Verdict result: huge gem centerpiece + roast + stats + share. */
+/** Verdict result: rubber-stamp headline + roast + ledger stats + share. */
 export function ResultCard({
   verdict,
   headline,
@@ -52,16 +46,13 @@ export function ResultCard({
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const art = asset(ART_SLOT[verdict])
-  const artReal = isRealRender(ART_SLOT[verdict])
-
   async function renderPng(): Promise<string | null> {
     if (!shareRef.current) return null
     return toPng(shareRef.current, { pixelRatio: 1, cacheBust: true })
   }
 
   async function handleWhatsApp() {
-    setBusy(true); setError(null); haptic()
+    setBusy(true); setError(null); haptic(); track('verdict_shared', { verdict })
     try {
       const dataUrl = await renderPng()
       const caption = `${VERDICT_LINE[verdict]} — ${headline}. Find out yours on Broke?`
@@ -94,33 +85,24 @@ export function ResultCard({
       {verdict === 'go' && <Confetti />}
 
       <motion.div
-        initial={{ opacity: 0, y: 18, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ type: 'spring', stiffness: 240, damping: 22 }}
-        className={['card overflow-hidden', GLOW[verdict], verdict === 'danger' ? 'animate-shake' : ''].join(' ')}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+        className={['card overflow-hidden', verdict === 'danger' ? 'animate-shake' : ''].join(' ')}
       >
-        {/* Huge gem centerpiece */}
-        <div className="relative flex items-center justify-center bg-bg pt-6 pb-2">
-          {art ? (
-            <motion.img
-              src={art}
-              alt=""
-              aria-hidden
-              initial={{ scale: 0.8, opacity: 0, rotate: -3 }}
-              animate={{ scale: 1, opacity: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 16, delay: 0.05 }}
-              className={[
-                artReal ? 'h-56 w-auto object-contain drop-shadow-[0_10px_40px_rgba(0,0,0,0.6)]' : 'h-40 w-full object-cover opacity-40',
-              ].join(' ')}
-            />
-          ) : (
-            <div className="halftone h-40 w-full" />
-          )}
+        {/* Masthead kicker */}
+        <div className="flex items-center justify-between bg-paper px-5 py-2">
+          <span className="font-display text-[11px] font-black uppercase tracking-[0.22em] text-ink">The Verdict</span>
+          <span className="num text-[10px] uppercase tracking-widest text-ink/60">Broke? · Special Edition</span>
         </div>
 
-        <div className="p-6 pt-2">
-          <VerdictBadge verdict={verdict} size="lg" />
-          <p className="mt-4 text-2xl font-black leading-tight text-paper">"{roast}"</p>
+        {/* Rubber stamp */}
+        <div className="flex justify-center px-6 pb-2 pt-8">
+          <VerdictBadge verdict={verdict} size="lg" slam />
+        </div>
+
+        <div className="px-6 pb-6 pt-2">
+          <p className="text-center font-display text-2xl font-black uppercase leading-[1.05]">“{roast}”</p>
 
           <div className="mt-5 grid grid-cols-2 gap-2">
             <Stat label={`EMI × ${months} mo`} value={`${inr(emi)}/mo`} accent={ACCENT[verdict]} />
@@ -128,13 +110,13 @@ export function ResultCard({
             <Stat label="Save-up-instead" value={humanMonths(affordInMonths)} />
             <Stat label="Likely rate" value={`${cibilBand.minRate}–${cibilBand.maxRate}%`} />
           </div>
-          <p className="mt-2 text-[11px] font-semibold text-paper/45">
+          <p className="mt-2 text-[11px] font-semibold text-paper/50">
             Rate band is an estimate from your CIBIL tier ({cibilBand.band}); real rates vary by lender.
           </p>
 
           <div className="mt-5 flex gap-2">
-            <BrutalButton variant="go" full onClick={handleWhatsApp} disabled={busy}>
-              <Share2 className="h-4 w-4" /> {busy ? '…' : 'Share'}
+            <BrutalButton variant="danger" full onClick={handleWhatsApp} disabled={busy}>
+              <Share2 className="h-4 w-4" /> {busy ? '…' : 'Share the receipt'}
             </BrutalButton>
             <BrutalButton variant="paper" onClick={handleDownload} disabled={busy} aria-label="Download image">
               <Download className="h-4 w-4" />
@@ -154,9 +136,9 @@ export function ResultCard({
 
 function Stat({ label, value, accent }: { label: string; value: string; accent?: string }) {
   return (
-    <div className="rounded-2xl border border-line bg-elev px-4 py-3">
-      <div className="font-display text-[10px] font-bold uppercase tracking-wide text-paper/45">{label}</div>
-      <div className={['font-display text-lg font-black tabular-nums', accent ?? 'text-paper'].join(' ')}>{value}</div>
+    <div className="border-[1.5px] border-paper bg-elev px-4 py-3">
+      <div className="font-display text-[10px] font-black uppercase tracking-wide text-paper/55">{label}</div>
+      <div className={['num text-lg font-bold', accent ?? 'text-paper'].join(' ')}>{value}</div>
     </div>
   )
 }

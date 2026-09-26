@@ -647,3 +647,219 @@ Also still open: Supabase (login-gated onboarding — see section above), `share
 **Then (next session):** *"Higgsfield's authed — regenerate the 6 hero assets in the neon red→violet
 style and polish the visuals."* (neon prompt is in the section above). After that, the big remaining
 build is **Supabase** (login-gated onboarding — full plan in the TOMORROW'S JOB section).
+
+---
+
+# ✅ SESSION 2026-09-27 — Higgsfield MCP neon assets + motion/floating-glass redesign
+
+**Gate green: `npm run build` clean + `npm test` = 64 passed.** Finance/daily/tests/data
+untouched (guardrail held). Higgsfield MCP is now authed + working end-to-end.
+
+## Higgsfield MCP — generated all 6 neon slot assets directly (no web-app export/drop)
+- Model: **Cinema Studio Image 2.5** (`cinematic_studio_2_5`), 2k, per-slot aspect ratios.
+  Tool shape (for next time): `generate_image({ params: { model, prompt, aspect_ratio, resolution } })`;
+  wait via `jobs_wait({ jobs: [{ job_id, index }] })`.
+- Regenerated in the neon red→violet direction, compressed via ffmpeg → slot-named WebP in
+  `src/assets/higgsfield/` (all 24–53 KB, well under the 250 KB PWA budget):
+  `today-hero` (glass card + neon ring + flame + ₹ coins, on pure black, left half empty for text),
+  `verdict-go` (green gem), `verdict-warn` (amber gem in neon ring — regenerated to match style),
+  `verdict-danger` (neon wallet + cracked red gem), `escape-header` (violet staircase + chain→coins),
+  `share-bg` (coins/badge/confetti framing an empty glowing center). `afford-bg` left as-is.
+- **First today-hero render came back on a WHITE smoky bg (unusable on the dark app) — regenerated
+  on explicit pure black.** Source PNGs are in `%TEMP%\hf` (not committed).
+
+## Motion + floating-glass redesign (design/motion only)
+- **NEW `src/index.css` utilities:** `.glass` (frosted floating panel), `.float`/`.float-2` (bob),
+  `.tilt` (pointer-parallax target), `.badge-pop`. All `prefers-reduced-motion`-guarded.
+- **`src/lib/ui.tsx`:** added `useTilt()` — pointer-parallax 3D tilt (mouse-only, mutates transform
+  directly, no re-render). Note: React 19 ref typing → hook returns `RefObject<T>` via a cast.
+- **NEW `src/components/Milestones.tsx`** — streak milestone badges (3/7/14/30/100 days) driven purely
+  by the existing `streak` record (`best = max(current, longest)`); gradient tension bar to next tier.
+  Shown on **Today** and **Me**. (This is the session's "few new features".)
+- **`Today.tsx` rebuilt:** cinematic neon hero (today-hero render backdrop @45% + scrim), **floating
+  glass allowance window** (ring in a `.glass .float-2` card, count-up on the ₹ figure), Milestones,
+  quick-tool tiles upgraded to `.glass` + `useTilt` + float with glowing accent chips.
+- **`DailyWidgets.tsx`:** allowance "left today" number now count-ups (`useCountUp`).
+- **`ResultCard.tsx`:** verdict gem floats (`.float` wrapper) — auto-uses the new neon gem renders.
+
+## Verified
+- Eyeballed at 430px width (dev server): hero, floating glass allowance card, pulse CTA, milestones
+  (3d/7d/14d unlocked + glowing, 30d/100d locked), glass tiles, glass nav — all render clean.
+
+## Still open (unchanged)
+- **Not pushed** — redesign is local only (previous neon commit `9105769` also still unpushed). Run
+  `git push` to deploy. Dev server was left running on localhost:5179.
+- Supabase login-gated onboarding (the big remaining v3 item — full plan above).
+- Deferred: Razorpay/UPI, real affiliates, future-income (C), delete orphaned `PaywallSheet`/`ProLock`.
+
+---
+
+# ✅ SESSION 2026-09-27 (cont.) — "TABLOID CASH" REDESIGN (via /grill-me)
+
+**Gate green: `npm run build` clean + `npm test` = 64 passed.** Design-only; finance/daily/tests/data
+untouched. **Local only — not pushed.** Direction locked through a full grilling session (5 rounds).
+
+## The pivot (why)
+Neon-luxe read as generic dark-fintech. Grilling → a distinctive lane with attitude that fits the
+name. **Chosen: "Tabloid Cash" + rubber-stamp verdicts.** The neon 3D gems are **retired** (files
+kept in `src/assets/higgsfield/`, unused by the new components).
+
+## Design system (agreed spec, all shipped)
+- **Canvas flipped dark → LIGHT newsprint.** `src/index.css` rebuilt: paper `#f4f1ea`, ink `#16130e`,
+  one hot tabloid red `#e5231b`. Trick: `--color-paper` token now = **ink** so every `text-paper`
+  usage across all screens flips to dark text automatically (whole app re-skins via token cascade).
+  Color survives **only** inside verdict stamps (green/amber/red).
+- **Type:** Archivo black headlines (uppercase) + **Space Mono** for all figures + ticker
+  (`index.html` swapped Space Grotesk → Space Mono; theme-color → paper).
+- **Motion:** crisp/physical — **rubber-stamp SLAM** (`.stamp` + `.stamp-slam`, mix-blend multiply so
+  it looks pressed on paper), scrolling **headline ticker** (`.ticker`), paper-slide page transitions,
+  number count-ups. Retired float/tilt/glass/aurora (neon utilities neutralised in CSS, not deleted).
+- **Cards:** flat ruled newspaper boxes — `.card`/`.glass` redefined to paper + 1.5px ink border +
+  3px hard offset shadow. Buttons (`BrutalButton`) → solid ink/red blocks with hard shadow.
+
+## Verdict stamps (signature moment)
+`VerdictBadge` rewritten as a rotated, ink-distressed rubber stamp: **APPROVED / THINK TWICE /
+DECLINED**. `ResultCard` rebuilt: black "THE VERDICT · SPECIAL EDITION" kicker → slamming stamp →
+uppercase roast → mono ledger stat boxes → "Share the receipt". Verified live (green APPROVED on the
+₹80k-phone case).
+
+## Today hero re-flow
+Masthead ("BROKE?" nameplate + mono dateline + rule) → black **headline ticker** → **lead story** =
+allowance as a giant mono headline number + **ink burn-down bar** (`AllowanceBar` replaces the ring;
+`AllowanceRing` removed) → red **"STOP PRESS · Daily check-in"** → **Streak scoreboard** (Milestones
+restyled to boxed badge cells) → "The desk · quick tools" boxed tiles. `AppShell` top bar + bottom
+nav re-skinned to boxed newsprint strips.
+
+## Higgsfield this session (1 gen)
+Regenerated **only `share-bg`** as a halftone newspaper clipping (Cinema Studio 2.5, 4:5) → ffmpeg
+webp **236 KB**. `ShareCard` rewritten: newsprint frame + boxed cream article + rubber-stamp verdict +
+mono ledger. (Other slots' neon web— today-hero/verdict-*/escape-header — remain in the folder but
+are no longer referenced by any component.)
+
+## Files touched
+`index.html`, `src/index.css` (full rewrite), `components/{VerdictBadge,ResultCard,DailyWidgets,
+Milestones,AppShell,BrutalButton,ShareCard}.tsx`, `screens/Today.tsx`, `lib/ui.tsx` (useTilt now
+unused, harmless). `src/assets/higgsfield/share-bg.webp` replaced.
+
+## Verified (dev server, 430px)
+Today masthead+ticker+lead card+STOP PRESS+scoreboard+tiles; AffordCheck form + **APPROVED stamp** +
+emergency runway — all coherent tabloid. Every screen inherits via the token cascade.
+
+---
+
+# ✅ SESSION 2026-09-27 (cont.) — SUPABASE AUTH (Google + Phone OTP) + MIXPANEL (via /grill-me)
+
+**Gate green: `npm run build` clean + `npm test` = 64 passed.** Grilled first (Q1–Q7 + phone-OTP
+add). Finance/daily/tests/data untouched. **Login page verified live (dummy env, then removed).**
+**Not pushed. Cloud SYNC (push/pull user data) is the NEXT ticket — NOT built here.**
+
+## Locked decisions (grilling)
+- **Keys never touch Claude.** Everything is **null-guarded**: no `VITE_*` env → clients are `null`,
+  app runs offline with a dev-skip. User pastes keys into `.env.local` (+ Vercel) themselves.
+- **Auth = Google OAuth + Phone OTP** (+91 default, 2-step). Magic link deferred.
+- **Mixpanel core funnel**, US region (EU = 1 env flip), `identify(user.id)` after login, anon before.
+  **No financial values ever sent** — only verdict categories + event names.
+- **Consent = opt-out** (on by default, disclosure on login screen, toggle in Me). DPDP-defensible.
+- **Privacy reframe:** Me copy changed from "runs fully on device, no account" → "browse free, sign
+  in to save, minimal PII, encrypted at rest, export/delete anytime."
+
+## Built
+- **NEW `src/lib/supabase.ts`** — null-guarded client + `signInWithGoogle`, `sendPhoneOtp`,
+  `verifyPhoneOtp` (type:'sms'), `signOut`, `isSupabaseConfigured`. OAuth `redirectTo: origin`.
+- **NEW `src/lib/analytics.ts`** — null-guarded Mixpanel (`mixpanel-browser`): `initAnalytics`,
+  `track`, `identifyUser`, `resetAnalytics`, `setAnalyticsOptOut`/`isOptedOut`. Opt-out persisted in
+  localStorage; every call wrapped in try/catch so analytics can never break the app.
+- **NEW `src/components/Login.tsx`** — tabloid login wall: Google button (inline G logo) + phone OTP
+  two-step (+91) + honest privacy line + dev-skip (localhost/unconfigured only).
+- **`App.tsx`** — session gate: `onboarding → login wall → app`. `getSession()` + `onAuthStateChange`
+  (identify + `login_success` on SIGNED_IN). `initAnalytics()` on mount. `onboarding_complete` tracked.
+- **`Me.tsx`** — Account card (email/phone + **Sign out**), reframed privacy copy, **analytics On/Off
+  toggle**.
+- Events instrumented: `onboarding_complete`, `login_started`{method}, `login_success`,
+  `daily_check_in`{kind} (Today), `afford_verdict`{verdict,want} (AffordCheck), `verdict_shared`
+  {verdict} (ResultCard).
+- **NEW `.env.example`** (documented, no secrets). `.gitignore` already ignores `*.local`.
+- Deps added: `@supabase/supabase-js`, `mixpanel-browser` (+ `@types/mixpanel-browser`).
+
+## ⚑ USER SETUP CHECKLIST (to actually activate — Claude can't, keys stay with you)
+1. **Supabase:** create project → Settings → API → copy URL + anon key.
+2. **Google provider:** Supabase → Auth → Providers → Google = on; create a Google Cloud OAuth client;
+   add redirect URLs `http://localhost:<port>` + `https://broke-app-five.vercel.app`.
+3. **Phone OTP:** Supabase → Auth → Providers → Phone = on; wire an **SMS provider** (Twilio / MSG91 /
+   Vonage — MSG91 is India-friendly). ⚠️ SMS costs per message.
+4. **DB:** SQL editor → `create table profiles_data (user_id uuid primary key references auth.users,
+   data jsonb, updated_at timestamptz default now());` → **enable RLS** → policies `user_id =
+   auth.uid()` for select/insert/update. (Used by the NEXT sync ticket.)
+5. **Mixpanel:** create project → copy Project Token.
+6. **`.env.local`** (+ Vercel env, Production+Preview): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
+   `VITE_MIXPANEL_TOKEN` (+ optional `VITE_MIXPANEL_EU=true`). Redeploy.
+
+## Next ticket
+Cloud **sync** (`src/lib/sync.ts`): `pullRemote()` on login → merge into local; debounced
+`pushRemote()` on storage writes → upsert the `profiles_data` jsonb blob. Delete must also delete the
+cloud row + sign out.
+
+---
+
+# ✅ SESSION 2026-09-27 (cont.) — ONBOARDING REWORK + CLOUD SYNC
+
+**Gate green: `npm run build` clean + `npm test` = 64 passed.** Design/logic only; finance/daily/tests
+untouched. **Not pushed.** Onboarding %/₹ toggle verified live.
+
+## Onboarding rework (`Onboarding.tsx`)
+- Retabloided (dropped the retired neon `today-hero` image → masthead + rule; paper texture; red
+  progress bar).
+- **Savings target now has a % ↔ ₹ toggle.** ₹ mode derives the pct at the input layer
+  (`savingsGoalPct = clamp(round(amount/income*100), 0..90)`) and shows "≈ N% of your income".
+  **`daily.ts` is NOT touched** — math always runs on the derived %, per the locked plan.
+- `finish()` stores `savingsGoalPct` (derived) + new `savingsMode` + `savingsAmount`.
+- Salary (post-tax) + fixed expenses were already collected; kept.
+
+## Storage (`storage.ts`, additive/backward-compatible)
+- `Settings` gained `savingsMode: 'percent'|'amount'` + `savingsAmount: number` (defaults added).
+- **Change notifier:** `subscribeStorage(cb)` + a `notify()` fired inside `write()` → every local
+  write can trigger a sync push. A `muted` flag suppresses notifications while applying a remote pull
+  (no pull→push loop).
+- **`getSyncSnapshot()` / `applySyncSnapshot()`** — the syncable slice (profile, settings, streak,
+  checkins, history; `isPro` stays device-local).
+
+## Cloud sync (`src/lib/sync.ts`) — NEW
+- `startSync(userId)` (idempotent): `pullRemote` (remote wins on login, v1) → `pushRemote` (ensure a
+  row) → subscribe to storage writes → **debounced (1.5s) `pushRemote`** (upsert jsonb, onConflict
+  user_id). `stopSync()` unsubscribes + clears the timer. `deleteRemote(userId)` for delete-all.
+- Every function no-ops when Supabase is null or signed out → never breaks offline.
+- **Wired `App.tsx`:** `onAuthStateChange` SIGNED_IN/INITIAL_SESSION → `startSync`; SIGNED_OUT →
+  `stopSync` + `resetAnalytics`.
+- **Wired `Me.tsx`:** sign-out calls `stopSync`; "delete all data" now also `deleteRemote` + signs out.
+
+## Still needs the USER (Claude can't — keys/console)
+The full **SETUP CHECKLIST** above still applies (Supabase project, Google OAuth client, SMS provider,
+`profiles_data` table + RLS, Mixpanel token, paste `.env.local` + Vercel). Until keys exist the app
+runs offline with the dev-skip; add keys and login + sync activate with zero code change.
+
+## Known v1 edge (acceptable, noted)
+A returning user on a *new device* has no local profile → sees onboarding first, then login → pull
+overwrites with their real cloud data. Fine for v1; revisit if it annoys.
+
+---
+
+# ✅ SESSION 2026-09-27 (cont.) — GOOGLE AUTH LIVE (keys wired, phone OTP deferred)
+
+- **Keys wired safely** into `.env.local` (Supabase URL + anon key + Mixpanel token). Validated via a
+  no-values checker; `.env.local` is gitignored (`*.local`). Claude never saw the key values.
+- **Login is Google-only now** (`Login.tsx` — phone OTP UI removed; `sendPhoneOtp`/`verifyPhoneOtp`
+  stay dormant in `supabase.ts` for later).
+- **Google OAuth working end-to-end** on `localhost:5179` after fixing two gotchas:
+  1. Google blocks OAuth in the automation/DevTools-driven browser → **test in a normal browser**.
+  2. Supabase **Site URL** had two space-separated URLs pasted in (500 `unexpected_failure`,
+     "invalid port after host"). Fix: Site URL = ONE url (`http://localhost:5179`); the extra
+     callback goes in the separate **Redirect URLs** list (`…/**`).
+- Verified: Login wall renders with real config; sign-in returns to app; Me shows Google email +
+  Sign out.
+
+## ⚑ STILL TODO for production
+- Add `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_MIXPANEL_TOKEN` to **Vercel → Env Vars**
+  (Prod+Preview) + add `https://broke-app-five.vercel.app/**` to Supabase Redirect URLs, else prod
+  runs offline (client null, no login) — which is safe, just not authed.
+- Run the `profiles_data` table + RLS SQL so sync actually persists (see checklist above).
+- Phone OTP: re-enable later (SMS provider + un-comment the Login phone block).

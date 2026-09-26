@@ -18,6 +18,7 @@ import { getProfile, setProfile, addHistory, getSettings } from '../lib/storage'
 import { inr, inrCompact, humanMonths } from '../lib/format'
 import { affordRoast, bufferRoast, reverseAffordRoast } from '../lib/tone'
 import { haptic } from '../lib/ui'
+import { track } from '../lib/analytics'
 import { partnersByKind } from '../data/partners'
 import { WANTS, getWant } from '../data/wants'
 import { useRouter } from '../lib/router'
@@ -68,6 +69,7 @@ export function AffordCheck() {
   function handleCheck() {
     haptic(18)
     setSubmitted(true)
+    track('afford_verdict', { verdict: result.verdict, want: wantId })
     setProfile({
       netMonthlyIncome: val(income),
       existingEmis: val(existingEmis),

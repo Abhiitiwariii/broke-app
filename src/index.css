@@ -1,35 +1,35 @@
 @import 'tailwindcss';
 
 /* ================================================================
-   Broke? — neon-luxe design system (2026-09-26)
-   Near-black canvas · red→violet signature gradient · Space Grotesk
-   numerics · sharp, purposeful neon with CRED-grade restraint.
+   Broke? — "Tabloid Cash" design system (2026-09-27)
+   Newsprint paper canvas · black ink · one hot tabloid red ·
+   Archivo headlines · Space Mono figures · rubber-stamp verdicts.
    ================================================================ */
 @theme {
-  --color-bg: #08080c;          /* app canvas — deep near-black */
-  --color-surface: #131319;     /* base card */
-  --color-surface2: #17171f;    /* card gradient bottom */
-  --color-elev: #1e1e27;        /* inputs / raised */
-  --color-paper: #f6f4ef;       /* primary text */
-  --color-muted: #a7a4b4;       /* secondary text */
-  --color-ink: #08080c;         /* text on bright accents */
-  --color-line: #ffffff14;      /* hairline */
+  --color-bg: #f4f1ea;          /* newsprint paper canvas */
+  --color-surface: #ffffff;     /* boxed card */
+  --color-surface2: #f0ece2;    /* tinted card */
+  --color-elev: #fffdf7;        /* inputs / raised */
+  --color-paper: #16130e;       /* PRIMARY TEXT = ink (name kept for cascade) */
+  --color-muted: #726a5c;       /* secondary ink */
+  --color-ink: #f7f4ee;         /* text ON dark/red blocks = paper */
+  --color-line: #16130e26;      /* hairline rule */
 
-  --color-go: #2ee66e;          /* 🟢 */
-  --color-warn: #ffc32b;        /* 🟡 */
-  --color-danger: #ff4136;      /* 🔴 */
-  --color-pop: #8b5cff;         /* violet accent */
-  --color-brand1: #ff3b6b;      /* gradient start (hot pink-red) */
-  --color-brand2: #8b5cff;      /* gradient end (violet) */
+  --color-go: #1c9d4e;          /* APPROVED */
+  --color-warn: #cf8400;        /* THINK TWICE */
+  --color-danger: #e5231b;      /* DECLINED / signature red */
+  --color-pop: #e5231b;         /* accent = red */
+  --color-brand1: #e5231b;
+  --color-brand2: #e5231b;
 
   --font-display: 'Archivo', 'Arial Black', system-ui, sans-serif;
   --font-sans: 'Archivo', system-ui, sans-serif;
-  --font-num: 'Space Grotesk', 'Archivo', system-ui, sans-serif;
+  --font-num: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
 
-  --radius-brutal: 22px;
+  --radius-brutal: 4px;
 }
 
-:root { color-scheme: dark; }
+:root { color-scheme: light; }
 html, body, #root { height: 100%; }
 
 body {
@@ -39,12 +39,10 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* layered aurora glow — alive but restrained */
-  background-image:
-    radial-gradient(90% 55% at 12% -8%, #ff3b6b26 0%, transparent 55%),
-    radial-gradient(85% 55% at 92% -4%, #8b5cff2e 0%, transparent 55%),
-    radial-gradient(120% 70% at 50% 112%, #8b5cff1c 0%, transparent 60%);
-  background-attachment: fixed;
+  /* faint newsprint tooth so the paper never looks like flat white */
+  background-image: radial-gradient(#16130e 0.5px, transparent 0.6px);
+  background-size: 3px 3px;
+  background-blend-mode: multiply;
 }
 * { box-sizing: border-box; }
 
@@ -52,38 +50,40 @@ h1, h2, h3 {
   font-family: var(--font-display);
   font-weight: 900;
   letter-spacing: -0.03em;
-  line-height: 0.96;
+  line-height: 0.92;
   margin: 0;
+  text-transform: uppercase;
 }
 
-/* Numbers use the grotesk — precise, techy */
-.num { font-family: var(--font-num); font-feature-settings: 'tnum' 1; letter-spacing: -0.02em; }
+/* Figures use the mono — ledger / cash-receipt character */
+.num { font-family: var(--font-num); font-feature-settings: 'tnum' 1; letter-spacing: -0.03em; }
 
-/* Signature gradient text (wordmark, hero figures) */
-.grad-text {
-  background: linear-gradient(100deg, var(--color-brand1), var(--color-brand2));
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-}
-.brand-fill { background: linear-gradient(100deg, var(--color-brand1), var(--color-brand2)); }
+/* Wordmark / lead ink (kept class name; now solid ink, no gradient) */
+.grad-text { color: var(--color-paper); background: none; -webkit-text-fill-color: currentColor; }
+.brand-fill { background: var(--color-danger); }
+.grad-anim { animation: none; }
 
 :where(button, a, input, [tabindex]):focus-visible {
-  outline: 2px solid var(--color-pop); outline-offset: 2px;
+  outline: 3px solid var(--color-danger); outline-offset: 2px;
 }
 
 @layer components {
-  /* Elevated card: subtle top→bottom gradient + inner top highlight + soft depth */
+  /* Boxed card: flat ruled newspaper box */
   .card {
-    background: linear-gradient(180deg, var(--color-surface), var(--color-surface2));
-    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-paper);
     border-radius: var(--radius-brutal);
-    box-shadow:
-      inset 0 1px 0 0 #ffffff12,
-      0 1px 2px 0 #00000060,
-      0 24px 48px -28px #000000d0;
+    box-shadow: 3px 3px 0 0 var(--color-paper);
   }
-  .card-lift { transition: transform .18s cubic-bezier(.2,.7,.2,1), box-shadow .18s; }
-  .card-lift:active { transform: scale(.985); }
+  /* Glass name kept for cascade — now a flat boxed card */
+  .glass {
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-paper);
+    border-radius: var(--radius-brutal);
+    box-shadow: 3px 3px 0 0 var(--color-paper);
+  }
+  .card-lift { transition: transform .12s ease, box-shadow .12s ease; }
+  .card-lift:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--color-paper); }
 }
 
 /* Inputs */
@@ -93,91 +93,100 @@ input[type='number'] { -moz-appearance: textfield; appearance: textfield; }
 
 input[type='range'] {
   -webkit-appearance: none; appearance: none;
-  height: 6px; border-radius: 999px; outline: none;
-  background: linear-gradient(90deg, var(--color-brand1), var(--color-brand2));
+  height: 8px; border-radius: 0; outline: none;
+  border: 1.5px solid var(--color-paper);
+  background: var(--color-danger);
 }
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none; appearance: none;
   width: 24px; height: 24px; border-radius: 999px;
-  background: #fff; border: 3px solid var(--color-pop);
-  box-shadow: 0 0 18px 0 var(--color-pop); cursor: pointer;
+  background: var(--color-bg); border: 2.5px solid var(--color-paper); cursor: pointer;
 }
 input[type='range']::-moz-range-thumb {
   width: 24px; height: 24px; border-radius: 999px;
-  background: #fff; border: 3px solid var(--color-pop); cursor: pointer;
+  background: var(--color-bg); border: 2.5px solid var(--color-paper); cursor: pointer;
 }
 
-/* Tag pill */
+/* Tag / sticker label — solid ink chip, red/verdict variants */
 .tag {
   display: inline-flex; align-items: center; gap: .35rem;
-  padding: .3rem .75rem; border: 1px solid var(--color-line);
-  border-radius: 999px; background: #ffffff0f; color: var(--color-paper);
-  font-family: var(--font-display); font-weight: 800; font-size: .66rem;
-  letter-spacing: .12em; text-transform: uppercase; backdrop-filter: blur(8px);
+  padding: .28rem .6rem; border: 1.5px solid var(--color-paper);
+  border-radius: 2px; background: var(--color-paper); color: var(--color-ink);
+  font-family: var(--font-display); font-weight: 900; font-size: .64rem;
+  letter-spacing: .1em; text-transform: uppercase;
 }
-.tag--pop { background: color-mix(in srgb, var(--color-pop) 26%, transparent); border-color: #8b5cff55; }
-.tag--danger { background: color-mix(in srgb, var(--color-danger) 22%, transparent); border-color: #ff413655; }
-.tag--go { background: color-mix(in srgb, var(--color-go) 20%, transparent); border-color: #2ee66e55; color: #d8ffe7; }
-.tag--warn { background: color-mix(in srgb, var(--color-warn) 22%, transparent); border-color: #ffc32b55; color: #fff3d4; }
-.tag--grad { background: linear-gradient(100deg, var(--color-brand1), var(--color-brand2)); border: none; color: #fff; }
+.tag--pop, .tag--danger { background: var(--color-danger); border-color: var(--color-danger); color: #fff; }
+.tag--go { background: var(--color-go); border-color: var(--color-go); color: #fff; }
+.tag--warn { background: var(--color-warn); border-color: var(--color-warn); color: #fff; }
+.tag--grad { background: var(--color-danger); border-color: var(--color-danger); color: #fff; }
 
-.highlight { background: linear-gradient(transparent 55%, #8b5cff66 55%); padding: 0 .12em; }
+.highlight { background: linear-gradient(transparent 52%, #e5231b55 52%); padding: 0 .1em; }
 
-/* ---- Neon glows ---- */
-.glow-go { box-shadow: inset 0 1px 0 0 #ffffff12, 0 0 50px -12px var(--color-go); }
-.glow-warn { box-shadow: inset 0 1px 0 0 #ffffff12, 0 0 50px -12px var(--color-warn); }
-.glow-danger { box-shadow: inset 0 1px 0 0 #ffffff12, 0 0 50px -12px var(--color-danger); }
-.glow-pop { box-shadow: inset 0 1px 0 0 #ffffff12, 0 0 50px -12px var(--color-pop); }
-.glow-brand { box-shadow: 0 0 44px -8px #8b5cffaa, 0 10px 30px -12px #ff3b6b88; }
+/* Rules */
+.rule { border-bottom: 1.5px solid var(--color-paper); }
+.rule-thick { border-bottom: 4px solid var(--color-paper); }
+.rule-red { border-bottom: 3px solid var(--color-danger); }
+.dot-rule { border-bottom: 2px dotted var(--color-paper); }
 
-/* ---- Animated aurora hero backdrop ---- */
-.hero-mesh { position: relative; overflow: hidden; background: #0b0b12; }
-.hero-mesh::before {
-  content: ''; position: absolute; inset: -30%;
-  background:
-    radial-gradient(38% 40% at 25% 30%, #ff3b6b66 0%, transparent 60%),
-    radial-gradient(42% 44% at 78% 34%, #8b5cff70 0%, transparent 62%),
-    radial-gradient(46% 46% at 55% 82%, #ff9f1c40 0%, transparent 60%);
-  filter: blur(14px); animation: aurora 14s ease-in-out infinite alternate;
+/* Halftone dot field */
+.halftone { background-image: radial-gradient(var(--color-paper) 1.2px, transparent 1.4px); background-size: 12px 12px; opacity: .12; }
+.grain { position: relative; }
+
+/* ---- Neon utilities NEUTRALISED for the tabloid lane ---- */
+.glow-go, .glow-warn, .glow-danger, .glow-pop, .glow-brand { box-shadow: none; }
+.hero-mesh { position: relative; overflow: hidden; background: var(--color-bg); }
+.hero-mesh::before { content: none; }
+.scrim-b { background: none; }
+.float, .float-2 { animation: none; }
+.tilt { transition: none; }
+
+/* ---- Scrolling headline ticker ---- */
+.ticker {
+  overflow: hidden; white-space: nowrap;
+  background: var(--color-paper); color: var(--color-ink);
+  border-top: 2px solid var(--color-paper); border-bottom: 2px solid var(--color-paper);
 }
-@keyframes aurora {
-  0% { transform: translate3d(-4%, -2%, 0) scale(1.05); }
-  50% { transform: translate3d(3%, 2%, 0) scale(1.12); }
-  100% { transform: translate3d(-2%, 3%, 0) scale(1.06); }
-}
-/* fine grain over the mesh so it never looks flat/banded */
-.grain::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .05;
-  background-image: radial-gradient(#fff 0.5px, transparent 0.6px);
-  background-size: 4px 4px;
-}
+.ticker-track { display: inline-flex; gap: 2.5rem; padding: .45rem 1.25rem; animation: ticker-scroll 22s linear infinite; }
+@keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-/* Bottom scrim to seat text over any hero */
-.scrim-b { background: linear-gradient(to top, var(--color-bg) 2%, #08080ccc 30%, transparent 72%); }
+/* ---- Rubber-stamp verdict ---- */
+.stamp {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+  letter-spacing: .04em; border: 4px solid currentColor; border-radius: 6px;
+  padding: .3em .55em; transform: rotate(-6deg); opacity: .92;
+  mix-blend-mode: multiply;
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+.stamp-slam { animation: stamp-slam .5s cubic-bezier(.2,1.3,.3,1) both; }
+@keyframes stamp-slam {
+  0% { transform: rotate(-6deg) scale(2.6); opacity: 0; }
+  55% { transform: rotate(-6deg) scale(.92); opacity: .95; }
+  75% { transform: rotate(-6deg) scale(1.05); }
+  100% { transform: rotate(-6deg) scale(1); opacity: .92; }
+}
 
 /* Motion */
-@keyframes broke-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
-.animate-shake { animation: broke-shake .45s cubic-bezier(.36,.07,.19,.97); }
+@keyframes broke-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+.animate-shake { animation: broke-shake .42s cubic-bezier(.36,.07,.19,.97); }
 
 @keyframes broke-pulse {
-  0% { box-shadow: 0 0 0 0 #8b5cff88, 0 10px 30px -10px #ff3b6b66; }
-  70% { box-shadow: 0 0 0 16px #8b5cff00, 0 10px 30px -10px #ff3b6b66; }
-  100% { box-shadow: 0 0 0 0 #8b5cff00, 0 10px 30px -10px #ff3b6b66; }
+  0% { box-shadow: 4px 4px 0 0 var(--color-paper), 0 0 0 0 #e5231b66; }
+  70% { box-shadow: 4px 4px 0 0 var(--color-paper), 0 0 0 12px #e5231b00; }
+  100% { box-shadow: 4px 4px 0 0 var(--color-paper), 0 0 0 0 #e5231b00; }
 }
-.pulse-cta { border-radius: 999px; animation: broke-pulse 2.2s ease-out infinite; }
+.pulse-cta { animation: broke-pulse 2.2s ease-out infinite; }
 
-.chip-live { display:inline-block; width:9px; height:9px; border-radius:999px; background:var(--color-danger); box-shadow:0 0 10px 1px var(--color-danger); animation: broke-pulse 1.4s ease-out infinite; }
+.chip-live { display:inline-block; width:9px; height:9px; border-radius:999px; background:var(--color-danger); animation: broke-pulse 1.4s ease-out infinite; }
 
 @keyframes broke-shimmer { 0%{background-position:-150% 0} 100%{background-position:250% 0} }
 .shimmer { background-image: linear-gradient(100deg, transparent 30%, #ffffffcc 50%, transparent 70%); background-size:200% 100%; animation: broke-shimmer 1.1s ease-out; }
 
-/* animated gradient sweep for the wordmark accent */
-@keyframes grad-slide { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
-.grad-anim { background-size: 200% 200%; animation: grad-slide 6s linear infinite; }
-
-.halftone { background-image: radial-gradient(#fff 1.2px, transparent 1.4px); background-size: 14px 14px; opacity: .05; }
+@keyframes badge-pop { 0%{transform:scale(.6);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+.badge-pop { animation: badge-pop .5s cubic-bezier(.36,.07,.19,1.2) both; }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-shake, .pulse-cta, .chip-live, .shimmer, .grad-anim { animation: none; }
-  .hero-mesh::before { animation: none; }
+  .animate-shake, .pulse-cta, .chip-live, .shimmer, .badge-pop,
+  .ticker-track, .stamp-slam { animation: none; }
+  .stamp-slam { transform: rotate(-6deg); opacity: .92; }
 }

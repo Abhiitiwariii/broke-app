@@ -15,15 +15,16 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { route, navigate } = useRouter()
 
   return (
-    <div className="relative mx-auto flex h-full min-h-screen w-full max-w-[460px] flex-col bg-bg sm:my-4 sm:min-h-0 sm:h-[calc(100vh-2rem)] sm:rounded-[28px] sm:border sm:border-line sm:shadow-[0_40px_120px_-40px_#000] overflow-hidden">
-      {/* Top bar */}
-      <header className="z-20 flex items-center justify-between border-b border-line bg-bg/70 px-4 py-2.5 backdrop-blur-xl">
+    <div className="relative mx-auto flex h-full min-h-screen w-full max-w-[460px] flex-col bg-bg sm:my-4 sm:min-h-0 sm:h-[calc(100vh-2rem)] sm:border-[1.5px] sm:border-paper sm:shadow-[8px_8px_0_0_var(--color-paper)] overflow-hidden">
+      {/* Top bar / nameplate */}
+      <header className="z-20 flex items-center justify-between border-b-[1.5px] border-paper bg-bg px-4 py-2.5">
         <button type="button" onClick={() => navigate('today')} className="flex items-center gap-2">
-          <span className="brand-fill glow-brand flex h-8 w-8 items-center justify-center rounded-[10px] font-display text-lg font-black text-white">
+          <span className="brand-fill flex h-8 w-8 items-center justify-center rounded-[4px] border-[1.5px] border-paper font-display text-lg font-black text-white">
             ?
           </span>
-          <span className="grad-text font-display text-xl font-black tracking-tight">Broke?</span>
+          <span className="grad-text font-display text-xl font-black uppercase tracking-tight">Broke?</span>
         </button>
+        <span className="num text-[9px] font-bold uppercase tracking-[0.2em] text-paper/50">The daily ledger</span>
       </header>
 
       {/* Scroll region */}
@@ -31,9 +32,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      {/* Floating glass nav */}
+      {/* Bottom nav — boxed masthead strip */}
       <nav className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex justify-center p-3">
-        <div className="pointer-events-auto flex gap-1 rounded-full border border-line bg-elev/80 p-1.5 shadow-[0_20px_50px_-16px_#000] backdrop-blur-xl">
+        <div className="pointer-events-auto flex gap-1 border-[1.5px] border-paper bg-bg p-1.5 shadow-[4px_4px_0_0_var(--color-paper)]">
           {NAV.map((item) => {
             const active = route === item.route
             const { Icon } = item
@@ -42,12 +43,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 key={item.route}
                 type="button"
                 onClick={() => navigate(item.route)}
-                className="relative flex flex-col items-center gap-0.5 rounded-full px-5 py-2 font-display text-[10px] font-black uppercase tracking-tight"
+                className="relative flex flex-col items-center gap-0.5 rounded-[3px] px-5 py-2 font-display text-[10px] font-black uppercase tracking-tight"
               >
                 {active && (
                   <motion.span
                     layoutId="navpill"
-                    className="absolute inset-0 rounded-full bg-paper"
+                    className="absolute inset-0 rounded-[3px] bg-paper"
                     transition={{ type: 'spring', stiffness: 500, damping: 34 }}
                   />
                 )}

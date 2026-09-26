@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ShoppingBag, TrendingDown, ArrowRight } from 'lucide-react'
 import { BrutalButton } from '../components/BrutalButton'
-import { AllowanceRing, StreakFlame } from '../components/DailyWidgets'
+import { AllowanceBar, StreakFlame } from '../components/DailyWidgets'
 import { CheckInSheet } from '../components/CheckInSheet'
 import { Confetti } from '../components/Confetti'
 import {
@@ -25,12 +25,13 @@ import {
 import { inr } from '../lib/format'
 import { useRouter } from '../lib/router'
 import { usePro } from '../lib/proContext'
+import { Milestones } from '../components/Milestones'
+import { track } from '../lib/analytics'
 
-function greeting(): string {
-  const h = new Date().getHours()
-  if (h < 12) return 'Morning'
-  if (h < 17) return 'Afternoon'
-  return 'Evening'
+function dateline(): string {
+  return new Date()
+    .toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' })
+    .toUpperCase()
 }
 
 export function Today() {
@@ -58,6 +59,7 @@ export function Today() {
   const over = allowance > 0 && spentToday > allowance
 
   function handleSubmit(spent: number, kind: CheckInKind) {
+    track('daily_check_in', { kind })
     addCheckin({ date: today, spent, kind })
     const nextStreak = applyCheckIn(streak, today)
     setStreak(nextStreak)
@@ -80,48 +82,60 @@ export function Today() {
           ? "Your streak's on the line — check in before midnight."
           : "Log today's money in one tap. Keep the streak alive."
 
+  const tickerItems = [
+    `🔥 ${streak.current}-DAY STREAK`,
+    allowance > 0 ? `${inr(allowance)}/DAY BUDGET` : 'SET YOUR INCOME',
+    over ? `OVER BY ${inr(spentToday - allowance)}` : checkedInToday ? 'CHECKED IN TODAY ✓' : 'CHECK IN BEFORE MIDNIGHT',
+    'BROKE? — FIND OUT BEFORE YOU ARE',
+  ]
+
   return (
     <div className="relative">
       {celebrate && <Confetti />}
 
-      {/* Neon aurora hero — wordmark + ring are the stars */}
-      <div className="hero-mesh grain relative px-5 pb-8 pt-5">
-        <div className="relative flex items-start justify-between">
+      {/* Masthead */}
+      <div className="px-5 pt-4">
+        <div className="flex items-start justify-between">
           <div>
-            <div className="grad-text grad-anim font-display text-[42px] font-black leading-none">
+            <div className="grad-text font-display text-[46px] font-black uppercase leading-[0.82]">
               Broke<span className="text-danger">?</span>
             </div>
-            <div className="mt-1.5 font-display text-[11px] font-black uppercase tracking-[0.18em] text-muted">
-              {greeting()} · your money today
+            <div className="mt-1.5 num text-[10px] font-bold uppercase tracking-[0.16em] text-paper/60">
+              {dateline()} · your money today
             </div>
           </div>
-          <div className="rounded-2xl border border-line bg-white/5 px-3 py-2 backdrop-blur-md">
-            <StreakFlame count={streak.current} active={checkedInToday} />
-          </div>
+          <StreakFlame count={streak.current} active={checkedInToday} />
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-          className="relative mt-5 flex justify-center"
-        >
-          <AllowanceRing spent={spentToday} allowance={allowance} />
-        </motion.div>
-
-        <p className="relative mt-5 text-center font-display text-sm font-bold text-paper/85">{roast}</p>
+        <div className="rule-thick mt-3" />
       </div>
 
-      <div className="flex flex-col gap-5 px-5 pb-6 pt-5">
-        {/* Check-in CTA */}
+      {/* Headline ticker */}
+      <Ticker items={tickerItems} />
+
+      <div className="flex flex-col gap-4 px-5 pb-6 pt-4">
+        {/* Lead story — the allowance */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+          className="card p-5"
+        >
+          <span className="tag tag--danger mb-3">Today's headline</span>
+          <AllowanceBar spent={spentToday} allowance={allowance} />
+          <p className="mt-4 border-t border-paper/15 pt-3 font-display text-sm font-black uppercase leading-snug text-paper/80">
+            {roast}
+          </p>
+        </motion.div>
+
+        {/* Check-in CTA — STOP PRESS */}
         {checkedInToday ? (
           <motion.div
             initial={{ scale: 0.98, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="flex items-center justify-between rounded-full border border-go/40 bg-go/10 px-5 py-3.5"
+            className="flex items-center justify-between border-[1.5px] border-go bg-go/10 px-5 py-3.5"
           >
             <span className="font-display font-black uppercase tracking-tight text-go">✓ Checked in today</span>
-            <button type="button" onClick={() => setSheetOpen(true)} className="font-display text-xs font-black uppercase text-muted underline">
+            <button type="button" onClick={() => setSheetOpen(true)} className="font-display text-xs font-black uppercase text-paper/60 underline">
               Add another
             </button>
           </motion.div>
@@ -131,32 +145,35 @@ export function Today() {
               <motion.div
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-center gap-2 rounded-full border border-danger/40 bg-danger/10 px-3 py-2 font-display text-xs font-black uppercase tracking-wide text-danger"
+                className="flex items-center justify-center gap-2 border-[1.5px] border-danger bg-danger/10 px-3 py-2 font-display text-xs font-black uppercase tracking-wide text-danger"
               >
                 <span className="chip-live" aria-hidden />
                 Streak at risk — check in before midnight
               </motion.div>
             )}
             <div className="pulse-cta">
-              <BrutalButton variant="ink" size="lg" full onClick={() => setSheetOpen(true)}>
-                🔥 Daily check-in
+              <BrutalButton variant="danger" size="lg" full onClick={() => setSheetOpen(true)}>
+                🔥 Stop press · Daily check-in
               </BrutalButton>
             </div>
           </div>
         )}
 
+        {/* Streak scoreboard */}
+        <Milestones current={streak.current} longest={streak.longest} />
+
         {/* Quick tools */}
         <div>
-          <div className="mb-2.5 font-display text-xs font-black uppercase tracking-[0.14em] text-muted">Quick tools</div>
+          <div className="mb-2.5 font-display text-xs font-black uppercase tracking-[0.14em] text-paper/55">The desk · quick tools</div>
           <div className="grid grid-cols-2 gap-3">
-            <Tile Icon={ShoppingBag} label="Worth it?" sub="Afford check" accent="go" onClick={() => navigate('afford')} />
-            <Tile Icon={TrendingDown} label="Debt trap" sub="Health score" accent="warn" onClick={() => navigate('debt')} />
+            <Tile Icon={ShoppingBag} label="Worth it?" sub="Afford check" onClick={() => navigate('afford')} />
+            <Tile Icon={TrendingDown} label="Debt trap" sub="Health score" onClick={() => navigate('debt')} />
           </div>
           {isProUnlocked && (
             <button
               type="button"
               onClick={() => navigate('escape')}
-              className="glow-brand mt-3 flex w-full items-center justify-between rounded-2xl brand-fill px-5 py-4 text-white"
+              className="mt-3 flex w-full items-center justify-between border-[1.5px] border-paper brand-fill px-5 py-4 text-white shadow-[3px_3px_0_0_var(--color-paper)]"
             >
               <span className="font-display font-black uppercase tracking-tight">★ Escape plan</span>
               <ArrowRight className="h-5 w-5" />
@@ -170,27 +187,36 @@ export function Today() {
   )
 }
 
+function Ticker({ items }: { items: string[] }) {
+  const row = items.join('    ✦    ')
+  return (
+    <div className="ticker mt-3">
+      <div className="ticker-track num text-[11px] font-bold uppercase tracking-wide">
+        <span>{row}</span>
+        <span aria-hidden>{row}</span>
+      </div>
+    </div>
+  )
+}
+
 function Tile({
   Icon,
   label,
   sub,
-  accent,
   onClick,
 }: {
   Icon: typeof ShoppingBag
   label: string
   sub: string
-  accent: 'go' | 'warn'
   onClick: () => void
 }) {
-  const ring = accent === 'go' ? 'text-go' : 'text-warn'
   return (
-    <motion.button type="button" onClick={onClick} whileTap={{ scale: 0.97 }} className="card card-lift p-4 text-left">
-      <span className={['flex h-9 w-9 items-center justify-center rounded-xl bg-white/6', ring].join(' ')}>
+    <button type="button" onClick={onClick} className="card card-lift p-4 text-left">
+      <span className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-paper text-ink">
         <Icon className="h-5 w-5" />
       </span>
-      <div className="mt-2.5 font-display text-lg font-black leading-none text-paper">{label}</div>
-      <div className="mt-1 font-display text-[11px] font-bold uppercase tracking-wide text-muted">{sub}</div>
-    </motion.button>
+      <div className="mt-2.5 font-display text-lg font-black uppercase leading-none text-paper">{label}</div>
+      <div className="mt-1 font-display text-[11px] font-bold uppercase tracking-wide text-paper/55">{sub}</div>
+    </button>
   )
 }

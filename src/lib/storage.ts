@@ -29,6 +29,10 @@ export interface Settings {
   savingsGoalPct: number
   /** Roast personality for verdict copy. Defaults to 'honest'. */
   roastTone: RoastTone
+  /** Whether the user set their savings goal as a % or a ₹ amount. */
+  savingsMode: 'percent' | 'amount'
+  /** The raw ₹ amount when savingsMode === 'amount' (for display; math uses the derived pct). */
+  savingsAmount: number
 }
 
 const KEYS = {
@@ -52,6 +56,25 @@ export const DEFAULT_PROFILE: Profile = {
 export const DEFAULT_SETTINGS: Settings = {
   savingsGoalPct: 20,
   roastTone: 'honest',
+  savingsMode: 'percent',
+  savingsAmount: 0,
+}
+
+// ---- Change notifier (drives cloud-sync pushes) -----------------------
+type Listener = () => void
+const listeners = new Set<Listener>()
+let muted = false
+
+/** Subscribe to any local write. Returns an unsubscribe fn. */
+export function subscribeStorage(cb: Listener): () => void {
+  listeners.add(cb)
+  return () => listeners.delete(cb)
+}
+function notify(): void {
+  if (muted) return
+  listeners.forEach((l) => {
+    try { l() } catch { /* ignore */ }
+  })
 }
 
 function read<T>(key: string, fallback: T): T {
@@ -67,6 +90,7 @@ function read<T>(key: string, fallback: T): T {
 function write<T>(key: string, value: T): void {
   try {
     localStorage.setItem(key, JSON.stringify(value))
+    notify()
   } catch {
     /* storage unavailable — silently degrade (in-memory only) */
   }
@@ -148,5 +172,40 @@ export function deleteAllData(): boolean {
     return true
   } catch {
     return false
+  }
+}
+
+// ---- Cloud-sync snapshot ----------------------------------------------
+export interface SyncSnapshot {
+  profile: Profile
+  settings: Settings
+  streak: Streak
+  checkins: CheckIn[]
+  history: HistoryEntry[]
+}
+
+/** The syncable slice of local state (no `isPro` — that's device-local). */
+export function getSyncSnapshot(): SyncSnapshot {
+  return {
+    profile: getProfile(),
+    settings: getSettings(),
+    streak: getStreak(),
+    checkins: getCheckins(),
+    history: getHistory(),
+  }
+}
+
+/** Apply a remote snapshot to local storage WITHOUT re-triggering a push. */
+export function applySyncSnapshot(s: Partial<SyncSnapshot> | null | undefined): void {
+  if (!s || typeof s !== 'object') return
+  muted = true
+  try {
+    if (s.profile) write(KEYS.profile, { ...DEFAULT_PROFILE, ...s.profile })
+    if (s.settings) write(KEYS.settings, { ...DEFAULT_SETTINGS, ...s.settings })
+    if (s.streak) write(KEYS.streak, s.streak)
+    if (Array.isArray(s.checkins)) write(KEYS.checkins, s.checkins)
+    if (Array.isArray(s.history)) write(KEYS.history, s.history)
+  } finally {
+    muted = false
   }
 }

@@ -4,14 +4,15 @@ import type { ReactNode } from 'react'
 type Variant = 'ink' | 'go' | 'warn' | 'danger' | 'pop' | 'paper'
 type Size = 'sm' | 'md' | 'lg'
 
-// Primary CTA ("ink") is the signature red→violet gradient with a neon glow.
+// Tabloid buttons: solid ink/red blocks with a hard offset shadow.
+const HARD = 'border-[1.5px] border-paper shadow-[3px_3px_0_0_var(--color-paper)]'
 const VARIANT: Record<Variant, string> = {
-  ink: 'brand-fill text-white glow-brand',
-  paper: 'bg-elev text-paper border border-line',
-  go: 'bg-go text-ink shadow-[0_10px_34px_-12px_var(--color-go)]',
-  warn: 'bg-warn text-ink shadow-[0_10px_34px_-12px_var(--color-warn)]',
-  danger: 'bg-danger text-paper shadow-[0_10px_34px_-12px_var(--color-danger)]',
-  pop: 'brand-fill text-white glow-brand',
+  ink: `brand-fill text-white ${HARD}`,
+  paper: `bg-elev text-paper ${HARD}`,
+  go: `bg-go text-white ${HARD}`,
+  warn: `bg-warn text-white ${HARD}`,
+  danger: `bg-danger text-white ${HARD}`,
+  pop: `brand-fill text-white ${HARD}`,
 }
 
 const SIZE: Record<Size, string> = {

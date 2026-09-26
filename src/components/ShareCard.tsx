@@ -11,16 +11,18 @@ interface Props {
   roast: string
 }
 
-const THEME: Record<Verdict, { bg: string; ink: string; emoji: string; label: string }> = {
-  go: { bg: '#22C55E', ink: '#12100E', emoji: '🟢', label: 'GO FOR IT' },
-  warn: { bg: '#F5B400', ink: '#12100E', emoji: '🟡', label: 'THINK TWICE' },
-  danger: { bg: '#FF3B30', ink: '#F4F1EA', emoji: '🔴', label: "YOU'RE BROKE" },
+const PAPER = '#f4f1ea'
+const INK = '#16130e'
+const THEME: Record<Verdict, { color: string; label: string }> = {
+  go: { color: '#1c9d4e', label: 'APPROVED' },
+  warn: { color: '#cf8400', label: 'THINK TWICE' },
+  danger: { color: '#e5231b', label: 'DECLINED' },
 }
 
 /**
- * Fixed 1080×1350 export-styled result card. Rendered off-screen and captured
- * to PNG by ResultCard. Uses inline styles (no Tailwind) so html-to-image
- * serialises it faithfully regardless of the surrounding stylesheet.
+ * Fixed 1080×1350 export card. Rendered off-screen and captured to PNG by
+ * ResultCard. Inline styles only (no Tailwind) so html-to-image serialises it
+ * faithfully. Tabloid look: newsprint frame + boxed article + rubber stamp.
  */
 export const ShareCard = forwardRef<HTMLDivElement, Props>(function ShareCard(
   { verdict, headline, price, emi, roast },
@@ -35,15 +37,10 @@ export const ShareCard = forwardRef<HTMLDivElement, Props>(function ShareCard(
         position: 'relative',
         width: 1080,
         height: 1350,
-        backgroundColor: t.bg,
-        color: t.ink,
+        backgroundColor: INK,
+        color: INK,
         fontFamily: "'Archivo', system-ui, sans-serif",
-        padding: 80,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
         boxSizing: 'border-box',
-        border: '16px solid #12100E',
         overflow: 'hidden',
       }}
     >
@@ -51,61 +48,79 @@ export const ShareCard = forwardRef<HTMLDivElement, Props>(function ShareCard(
         <img
           src={bg}
           alt=""
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            opacity: 0.22,
-            mixBlendMode: 'multiply',
-            pointerEvents: 'none',
-          }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
         />
       )}
-      <div style={{ position: 'relative' }}>
-        <div style={{ fontSize: 72, fontWeight: 900, letterSpacing: '-0.03em' }}>
-          Broke<span style={{ color: verdict === 'danger' ? '#12100E' : '#FF3B30' }}>?</span>
-        </div>
-        <div style={{ fontSize: 34, fontWeight: 700, opacity: 0.75, marginTop: 8 }}>
-          find out before you are.
-        </div>
-      </div>
 
-      <div style={{ position: 'relative', textAlign: 'center' }}>
-        <div style={{ fontSize: 180, lineHeight: 1 }}>{t.emoji}</div>
-        <div
-          style={{
-            fontSize: 96,
-            fontWeight: 900,
-            letterSpacing: '-0.03em',
-            marginTop: 12,
-            textTransform: 'uppercase',
-          }}
-        >
-          {t.label}
+      {/* Boxed article on the newsprint */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 60,
+          backgroundColor: PAPER,
+          border: `3px solid ${INK}`,
+          boxShadow: `10px 10px 0 0 ${INK}`,
+          padding: 56,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          boxSizing: 'border-box',
+        }}
+      >
+        {/* Masthead */}
+        <div>
+          <div style={{ fontSize: 76, fontWeight: 900, letterSpacing: '-0.03em', textTransform: 'uppercase', lineHeight: 0.9 }}>
+            Broke<span style={{ color: '#e5231b' }}>?</span>
+          </div>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 22, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', opacity: 0.6, marginTop: 10 }}>
+            The daily ledger · find out before you are
+          </div>
+          <div style={{ borderBottom: `5px solid ${INK}`, marginTop: 16 }} />
         </div>
-        <div style={{ fontSize: 44, fontWeight: 800, marginTop: 24 }}>{headline}</div>
-      </div>
 
-      <div style={{ position: 'relative' }}>
-        <div
-          style={{
-            backgroundColor: '#12100E',
-            color: '#F4F1EA',
-            borderRadius: 18,
-            padding: '28px 36px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            fontSize: 40,
-            fontWeight: 800,
-          }}
-        >
-          <span>{inr(price)}</span>
-          <span>{inr(emi)}/mo</span>
+        {/* Verdict stamp */}
+        <div style={{ textAlign: 'center' }}>
+          <span
+            style={{
+              display: 'inline-block',
+              color: t.color,
+              border: `7px solid ${t.color}`,
+              boxShadow: `inset 0 0 0 3px ${t.color}`,
+              borderRadius: 10,
+              padding: '14px 34px',
+              fontSize: 96,
+              fontWeight: 900,
+              textTransform: 'uppercase',
+              letterSpacing: '0.02em',
+              transform: 'rotate(-5deg)',
+              opacity: 0.95,
+            }}
+          >
+            {t.label}
+          </span>
+          <div style={{ fontSize: 46, fontWeight: 900, textTransform: 'uppercase', marginTop: 30, lineHeight: 1.05 }}>{headline}</div>
         </div>
-        <div style={{ fontSize: 40, fontWeight: 700, marginTop: 28, lineHeight: 1.2 }}>
-          "{roast}"
+
+        {/* Ledger + roast */}
+        <div>
+          <div
+            style={{
+              backgroundColor: INK,
+              color: PAPER,
+              padding: '24px 34px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontFamily: "'Space Mono', monospace",
+              fontSize: 40,
+              fontWeight: 700,
+            }}
+          >
+            <span>{inr(price)}</span>
+            <span>{inr(emi)}/mo</span>
+          </div>
+          <div style={{ fontSize: 38, fontWeight: 900, textTransform: 'uppercase', marginTop: 24, lineHeight: 1.15 }}>
+            “{roast}”
+          </div>
         </div>
       </div>
     </div>
