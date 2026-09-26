@@ -621,3 +621,29 @@ but recolour to the red→violet neon palette. Then: compress to webp <250 KB, d
 
 Also still open: Supabase (login-gated onboarding — see section above), `share-bg`, delete orphaned
 `PaywallSheet.tsx`/`ProLock.tsx`, optional `vercel.json`.
+
+---
+
+## ⏸ SAVE POINT (2026-09-26, end of session)
+
+**Where things stand right now:**
+- **Live app:** https://broke-app-five.vercel.app/ — still shows the *previous* dark UI. The
+  **neon-luxe redesign is committed locally (`9105769`) but NOT pushed yet.** Run `git push` to
+  deploy the neon look (auto-deploys via Vercel).
+- **Git:** on `main`. Latest local commits: `9105769` (neon redesign + MCP log), `7f3547f`
+  (revised onboarding/auth plan), `0986ead` (handoff), `b4b5a40` (initial). `origin` has up to
+  `b4b5a40` — **`git push` needed to sync the rest.**
+- **Demo videos** in `C:\Users\tabhi\Downloads\`: `broke-demo.mp4`, `broke-demo-final.mp4`
+  (titled, with the Vercel URL). Not in the repo.
+- **Higgsfield MCP:** added to `~/.claude.json` (user scope) as `higgsfield` →
+  `https://mcp.higgsfield.ai/mcp`. Status = **Needs authentication**. It does NOT show in `/mcp`
+  yet because it was added mid-session.
+
+**Two pending USER actions (do these next):**
+1. **Deploy the redesign:** `cd "C:\Users\tabhi\Downloads\broke app"` → `git push`.
+2. **Activate Higgsfield MCP:** fully **restart Claude Code** (`/quit` then relaunch) → `/mcp` →
+   higgsfield → **Authenticate** (browser). Then it's usable by the agent.
+
+**Then (next session):** *"Higgsfield's authed — regenerate the 6 hero assets in the neon red→violet
+style and polish the visuals."* (neon prompt is in the section above). After that, the big remaining
+build is **Supabase** (login-gated onboarding — full plan in the TOMORROW'S JOB section).
