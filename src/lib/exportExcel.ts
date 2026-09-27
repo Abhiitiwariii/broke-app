@@ -5,7 +5,7 @@
  * We only ever WRITE our own data here (never parse untrusted workbooks),
  * so SheetJS' read-path advisories don't apply to this usage.
  */
-import * as XLSX from 'xlsx'
+import type * as XLSXType from 'xlsx'
 import { exportAllData } from './storage'
 
 /** A scalar object → [{ Field, Value }] rows so it reads cleanly in a sheet. */
@@ -23,7 +23,12 @@ function rows(value: unknown): Array<Record<string, unknown>> {
 }
 
 /** Append a sheet only if it has content; keeps empty categories out of the book. */
-function appendSheet(wb: XLSX.WorkBook, name: string, data: Array<Record<string, unknown>>): void {
+function appendSheet(
+  XLSX: typeof XLSXType,
+  wb: XLSXType.WorkBook,
+  name: string,
+  data: Array<Record<string, unknown>>,
+): void {
   if (data.length === 0) return
   const ws = XLSX.utils.json_to_sheet(data)
   // Sheet names are capped at 31 chars by the format.
@@ -32,27 +37,31 @@ function appendSheet(wb: XLSX.WorkBook, name: string, data: Array<Record<string,
 
 /**
  * Build the workbook and trigger a browser download.
- * Throws on failure so the caller can surface a friendly message.
+ * SheetJS is imported dynamically so its ~280 KB stays out of the main bundle
+ * and only loads when the user actually exports. Throws on failure so the
+ * caller can surface a friendly message.
  */
-export function exportDataToExcel(): void {
+export async function exportDataToExcel(): Promise<void> {
+  const XLSX = await import('xlsx')
   const data = exportAllData()
   const wb = XLSX.utils.book_new()
 
   // Summary — app meta + flags that don't warrant their own sheet.
-  appendSheet(wb, 'Summary', [
+  appendSheet(XLSX, wb, 'Summary', [
     { Field: 'App', Value: String(data.app ?? 'Broke?') },
     { Field: 'Exported at', Value: String(data.exportedAt ?? new Date().toISOString()) },
     { Field: 'Pro', Value: data['broke.isPro'] === true ? 'Yes' : 'No' },
   ])
 
-  appendSheet(wb, 'Profile', keyValueRows(data['broke.profile']))
-  appendSheet(wb, 'Settings', keyValueRows(data['broke.settings']))
-  appendSheet(wb, 'Streak', keyValueRows(data['broke.streak']))
+  appendSheet(XLSX, wb, 'Profile', keyValueRows(data['broke.profile']))
+  appendSheet(XLSX, wb, 'Settings', keyValueRows(data['broke.settings']))
+  appendSheet(XLSX, wb, 'Streak', keyValueRows(data['broke.streak']))
 
-  appendSheet(wb, 'Debts', rows(data['broke.debts']))
+  appendSheet(XLSX, wb, 'Debts', rows(data['broke.debts']))
 
   // History carries an epoch-ms `at`; add a human-readable date alongside it.
   appendSheet(
+    XLSX,
     wb,
     'History',
     rows(data['broke.history']).map((h) => ({
@@ -61,7 +70,7 @@ export function exportDataToExcel(): void {
     })),
   )
 
-  appendSheet(wb, 'Check-ins', rows(data['broke.checkins']))
+  appendSheet(XLSX, wb, 'Check-ins', rows(data['broke.checkins']))
 
   // If nothing was stored yet, still give a valid one-sheet file.
   if (wb.SheetNames.length === 0) {

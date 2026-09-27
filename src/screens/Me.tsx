@@ -60,9 +60,9 @@ export function Me() {
   function updateGoal(v: number) { setGoal(v); setSettings({ savingsGoalPct: v }) }
   function updateTone(t: RoastTone) { setTone(t); setSettings({ roastTone: t }) }
 
-  function exportData() {
+  async function exportData() {
     try {
-      exportDataToExcel()
+      await exportDataToExcel()
     } catch { window.alert('Could not export right now. Try again.') }
   }
 
