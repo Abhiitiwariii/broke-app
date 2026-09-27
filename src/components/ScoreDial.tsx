@@ -54,11 +54,12 @@ export function ScoreDial({ score, size = 220 }: Props) {
           fill="none"
           stroke={COLOR[verdict]}
           strokeWidth={stroke}
-          strokeLinecap="butt"
+          strokeLinecap="round"
           strokeDasharray={`${dash} ${circumference}`}
           initial={{ strokeDasharray: `0 ${circumference}` }}
           animate={{ strokeDasharray: `${dash} ${circumference}` }}
           transition={{ type: 'spring', stiffness: 60, damping: 15 }}
+          style={{ filter: `drop-shadow(0 0 10px ${COLOR[verdict]})` }}
         />
         {/* outline ring for the brutalist edge */}
         <circle

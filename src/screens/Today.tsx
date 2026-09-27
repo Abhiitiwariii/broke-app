@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ShoppingBag, TrendingDown, ArrowRight } from 'lucide-react'
 import { BrutalButton } from '../components/BrutalButton'
-import { AllowanceBar, StreakFlame } from '../components/DailyWidgets'
+import { AllowanceRing, StreakFlame } from '../components/DailyWidgets'
+import { asset } from '../lib/assets'
 import { CheckInSheet } from '../components/CheckInSheet'
 import { Confetti } from '../components/Confetti'
 import {
@@ -89,44 +90,74 @@ export function Today() {
     'BROKE? — FIND OUT BEFORE YOU ARE',
   ]
 
+  const heroVideo = asset('today-hero-video')
+  const heroImg = asset('today-hero')
+  const prefersReduced =
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
   return (
     <div className="relative">
       {celebrate && <Confetti />}
 
-      {/* Masthead */}
-      <div className="px-5 pt-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="grad-text font-display text-[46px] font-black uppercase leading-[0.82]">
-              Broke<span className="text-danger">?</span>
-            </div>
-            <div className="mt-1.5 num text-[10px] font-bold uppercase tracking-[0.16em] text-paper/60">
-              {dateline()} · your money today
-            </div>
-          </div>
-          <StreakFlame count={streak.current} active={checkedInToday} />
-        </div>
-        <div className="rule-thick mt-3" />
-      </div>
+      {/* ===== Cinematic hero ===== */}
+      <section className="hero-mesh relative overflow-hidden">
+        {/* backdrop: video → image → aurora (from .hero-mesh) */}
+        {heroVideo && !prefersReduced ? (
+          <video
+            className="absolute inset-0 h-full w-full object-cover opacity-50"
+            src={heroVideo}
+            poster={heroImg ?? undefined}
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden
+          />
+        ) : heroImg ? (
+          <img className="absolute inset-0 h-full w-full object-cover opacity-45" src={heroImg} alt="" aria-hidden />
+        ) : null}
+        <div className="scrim-b absolute inset-0 z-[1]" aria-hidden />
 
-      {/* Headline ticker */}
-      <Ticker items={tickerItems} />
+        {/* Masthead */}
+        <div className="relative z-10 px-5 pt-5">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="grad-anim font-display text-[52px] font-black uppercase leading-[0.8]">
+                Broke<span className="text-glow-pop">?</span>
+              </div>
+              <div className="mt-1.5 num text-[10px] font-bold uppercase tracking-[0.16em] text-paper/60">
+                {dateline()} · your money today
+              </div>
+            </div>
+            <StreakFlame count={streak.current} active={checkedInToday} />
+          </div>
+          <div className="rule mt-3" />
+        </div>
+
+        {/* Headline ticker */}
+        <div className="relative z-10">
+          <Ticker items={tickerItems} />
+        </div>
+
+        {/* Lead story — the allowance ring */}
+        <div className="relative z-10 px-5 pb-6 pt-5">
+          <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+            className="glass float-2 p-5"
+          >
+            <span className="tag tag--grad mb-4">Today's headline</span>
+            <AllowanceRing spent={spentToday} allowance={allowance} />
+            <p className="mt-4 border-t border-line pt-3 text-center font-display text-sm font-black uppercase leading-snug text-paper/80">
+              {roast}
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
       <div className="flex flex-col gap-4 px-5 pb-6 pt-4">
-        {/* Lead story — the allowance */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 22 }}
-          className="card p-5"
-        >
-          <span className="tag tag--danger mb-3">Today's headline</span>
-          <AllowanceBar spent={spentToday} allowance={allowance} />
-          <p className="mt-4 border-t border-paper/15 pt-3 font-display text-sm font-black uppercase leading-snug text-paper/80">
-            {roast}
-          </p>
-        </motion.div>
-
         {/* Check-in CTA — STOP PRESS */}
         {checkedInToday ? (
           <motion.div
@@ -173,7 +204,7 @@ export function Today() {
             <button
               type="button"
               onClick={() => navigate('escape')}
-              className="mt-3 flex w-full items-center justify-between border-[1.5px] border-paper brand-fill px-5 py-4 text-white shadow-[3px_3px_0_0_var(--color-paper)]"
+              className="brand-fill glow-brand mt-3 flex w-full items-center justify-between rounded-[14px] px-5 py-4 text-white"
             >
               <span className="font-display font-black uppercase tracking-tight">★ Escape plan</span>
               <ArrowRight className="h-5 w-5" />
@@ -212,7 +243,7 @@ function Tile({
 }) {
   return (
     <button type="button" onClick={onClick} className="card card-lift p-4 text-left">
-      <span className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-paper text-ink">
+      <span className="brand-fill glow-brand flex h-9 w-9 items-center justify-center rounded-[10px] text-white">
         <Icon className="h-5 w-5" />
       </span>
       <div className="mt-2.5 font-display text-lg font-black uppercase leading-none text-paper">{label}</div>

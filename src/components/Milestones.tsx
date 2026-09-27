@@ -39,9 +39,9 @@ export function Milestones({ current, longest }: { current: number; longest: num
 
       {/* tension bar to next tier */}
       {next && (
-        <div className="mt-3 h-2 w-full border-[1.5px] border-paper bg-elev">
+        <div className="mt-3 h-2 w-full overflow-hidden rounded-full border border-line bg-elev">
           <motion.div
-            className="h-full bg-danger"
+            className="brand-fill h-full rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${Math.min(100, Math.round((current / next.days) * 100))}%` }}
             transition={{ type: 'spring', stiffness: 90, damping: 20 }}
@@ -59,8 +59,8 @@ export function Milestones({ current, longest }: { current: number; longest: num
                 initial={false}
                 whileTap={{ scale: 0.92 }}
                 className={[
-                  'flex h-12 w-12 items-center justify-center rounded-[4px] border-[1.5px] border-paper',
-                  unlocked ? 'bg-paper text-ink' : 'bg-elev text-paper/30',
+                  'flex h-12 w-12 items-center justify-center rounded-[12px] border border-line',
+                  unlocked ? 'brand-fill glow-brand text-white' : 'bg-elev text-paper/30',
                 ].join(' ')}
               >
                 <Icon className="h-5 w-5" strokeWidth={2.4} />

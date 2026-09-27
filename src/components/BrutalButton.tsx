@@ -4,15 +4,14 @@ import type { ReactNode } from 'react'
 type Variant = 'ink' | 'go' | 'warn' | 'danger' | 'pop' | 'paper'
 type Size = 'sm' | 'md' | 'lg'
 
-// Tabloid buttons: solid ink/red blocks with a hard offset shadow.
-const HARD = 'border-[1.5px] border-paper shadow-[3px_3px_0_0_var(--color-paper)]'
+// Night-edition buttons: neon gradient primary, glowing solid accents.
 const VARIANT: Record<Variant, string> = {
-  ink: `brand-fill text-white ${HARD}`,
-  paper: `bg-elev text-paper ${HARD}`,
-  go: `bg-go text-white ${HARD}`,
-  warn: `bg-warn text-white ${HARD}`,
-  danger: `bg-danger text-white ${HARD}`,
-  pop: `brand-fill text-white ${HARD}`,
+  ink: 'brand-fill text-white glow-brand',
+  paper: 'bg-elev text-paper border border-line',
+  go: 'bg-go text-[#04150c] glow-go',
+  warn: 'bg-warn text-[#221700] glow-warn',
+  danger: 'bg-danger text-white glow-danger',
+  pop: 'brand-fill text-white glow-brand',
 }
 
 const SIZE: Record<Size, string> = {

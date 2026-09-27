@@ -185,7 +185,7 @@ export function Me() {
             <button
               type="button"
               onClick={() => updateOptOut(!optOut)}
-              className={['border-[1.5px] border-paper px-3 py-1 font-display text-[11px] font-black uppercase', !optOut ? 'bg-go text-white' : 'bg-elev text-paper/55'].join(' ')}
+              className={['rounded-full border border-line px-3 py-1 font-display text-[11px] font-black uppercase', !optOut ? 'bg-go text-[#04150c] glow-go' : 'bg-elev text-paper/55'].join(' ')}
             >
               {optOut ? 'Off' : 'On'}
             </button>

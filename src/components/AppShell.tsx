@@ -15,11 +15,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { route, navigate } = useRouter()
 
   return (
-    <div className="relative mx-auto flex h-full min-h-screen w-full max-w-[460px] flex-col bg-bg sm:my-4 sm:min-h-0 sm:h-[calc(100vh-2rem)] sm:border-[1.5px] sm:border-paper sm:shadow-[8px_8px_0_0_var(--color-paper)] overflow-hidden">
+    <div className="relative mx-auto flex h-full min-h-screen w-full max-w-[460px] flex-col bg-bg sm:my-4 sm:min-h-0 sm:h-[calc(100vh-2rem)] sm:rounded-[24px] sm:border sm:border-line sm:shadow-[0_40px_100px_-40px_#000] overflow-hidden">
       {/* Top bar / nameplate */}
-      <header className="z-20 flex items-center justify-between border-b-[1.5px] border-paper bg-bg px-4 py-2.5">
+      <header className="z-20 flex items-center justify-between border-b border-line bg-bg/70 px-4 py-2.5 backdrop-blur-md">
         <button type="button" onClick={() => navigate('today')} className="flex items-center gap-2">
-          <span className="brand-fill flex h-8 w-8 items-center justify-center rounded-[4px] border-[1.5px] border-paper font-display text-lg font-black text-white">
+          <span className="brand-fill glow-brand flex h-8 w-8 items-center justify-center rounded-[8px] font-display text-lg font-black text-white">
             ?
           </span>
           <span className="grad-text font-display text-xl font-black uppercase tracking-tight">Broke?</span>
@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* Bottom nav — boxed masthead strip */}
       <nav className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex justify-center p-3">
-        <div className="pointer-events-auto flex gap-1 border-[1.5px] border-paper bg-bg p-1.5 shadow-[4px_4px_0_0_var(--color-paper)]">
+        <div className="glass pointer-events-auto flex gap-1 rounded-full p-1.5">
           {NAV.map((item) => {
             const active = route === item.route
             const { Icon } = item
@@ -43,17 +43,17 @@ export function AppShell({ children }: { children: ReactNode }) {
                 key={item.route}
                 type="button"
                 onClick={() => navigate(item.route)}
-                className="relative flex flex-col items-center gap-0.5 rounded-[3px] px-5 py-2 font-display text-[10px] font-black uppercase tracking-tight"
+                className="relative flex flex-col items-center gap-0.5 rounded-full px-5 py-2 font-display text-[10px] font-black uppercase tracking-tight"
               >
                 {active && (
                   <motion.span
                     layoutId="navpill"
-                    className="absolute inset-0 rounded-[3px] bg-paper"
+                    className="brand-fill glow-brand absolute inset-0 rounded-full"
                     transition={{ type: 'spring', stiffness: 500, damping: 34 }}
                   />
                 )}
-                <Icon className={['relative h-[18px] w-[18px]', active ? 'text-ink' : 'text-paper/55'].join(' ')} strokeWidth={2.5} />
-                <span className={['relative', active ? 'text-ink' : 'text-paper/55'].join(' ')}>
+                <Icon className={['relative h-[18px] w-[18px]', active ? 'text-white' : 'text-paper/55'].join(' ')} strokeWidth={2.5} />
+                <span className={['relative', active ? 'text-white' : 'text-paper/55'].join(' ')}>
                   {item.label}
                 </span>
               </button>

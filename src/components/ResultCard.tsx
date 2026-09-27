@@ -11,6 +11,9 @@ import { ShareCard } from './ShareCard'
 import { shareImage } from '../lib/share'
 import { haptic } from '../lib/ui'
 import { track } from '../lib/analytics'
+import { asset } from '../lib/assets'
+
+const GEM_GLOW: Record<Verdict, string> = { go: '#23d18b', warn: '#ffb020', danger: '#ff3355' }
 
 const VERDICT_LINE: Record<Verdict, string> = {
   go: 'APPROVED ✅',
@@ -45,6 +48,7 @@ export function ResultCard({
   const shareRef = useRef<HTMLDivElement>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const gem = asset(`verdict-${verdict}`)
 
   async function renderPng(): Promise<string | null> {
     if (!shareRef.current) return null
@@ -91,14 +95,28 @@ export function ResultCard({
         className={['card overflow-hidden', verdict === 'danger' ? 'animate-shake' : ''].join(' ')}
       >
         {/* Masthead kicker */}
-        <div className="flex items-center justify-between bg-paper px-5 py-2">
-          <span className="font-display text-[11px] font-black uppercase tracking-[0.22em] text-ink">The Verdict</span>
-          <span className="num text-[10px] uppercase tracking-widest text-ink/60">Broke? · Special Edition</span>
+        <div className="flex items-center justify-between border-b border-line px-5 py-2">
+          <span className="grad-text font-display text-[11px] font-black uppercase tracking-[0.22em]">The Verdict</span>
+          <span className="num text-[10px] uppercase tracking-widest text-paper/50">Broke? · Special Edition</span>
         </div>
 
-        {/* Rubber stamp */}
-        <div className="flex justify-center px-6 pb-2 pt-8">
-          <VerdictBadge verdict={verdict} size="lg" slam />
+        {/* Glowing gem + rubber stamp slamming over it */}
+        <div className="relative flex h-48 items-center justify-center px-6 pt-4">
+          {gem && (
+            <motion.img
+              src={gem}
+              alt=""
+              aria-hidden
+              className="float pointer-events-none absolute h-44 w-44 object-contain"
+              style={{ filter: `drop-shadow(0 0 34px ${GEM_GLOW[verdict]})` }}
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 0.95 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+            />
+          )}
+          <div className="relative z-10">
+            <VerdictBadge verdict={verdict} size="lg" slam />
+          </div>
         </div>
 
         <div className="px-6 pb-6 pt-2">
@@ -136,7 +154,7 @@ export function ResultCard({
 
 function Stat({ label, value, accent }: { label: string; value: string; accent?: string }) {
   return (
-    <div className="border-[1.5px] border-paper bg-elev px-4 py-3">
+    <div className="rounded-[10px] border border-line bg-elev px-4 py-3">
       <div className="font-display text-[10px] font-black uppercase tracking-wide text-paper/55">{label}</div>
       <div className={['num text-lg font-bold', accent ?? 'text-paper'].join(' ')}>{value}</div>
     </div>

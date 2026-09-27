@@ -863,3 +863,33 @@ overwrites with their real cloud data. Fine for v1; revisit if it annoys.
   runs offline (client null, no login) — which is safe, just not authed.
 - Run the `profiles_data` table + RLS SQL so sync actually persists (see checklist above).
 - Phone OTP: re-enable later (SMS provider + un-comment the Login phone block).
+
+---
+
+# ⏸ SAVE POINT (2026-09-27, end of session)
+
+## Done this session (all pushed to `main` @ `0f4a1a1`, live-deploying on Vercel)
+- Tabloid Cash redesign + Google auth + Mixpanel + cloud sync + onboarding %/₹ toggle.
+- **Supabase DB schema created + RAN successfully** ("Success. No rows returned"):
+  `supabase/schema.sql` → **`profiles_data`** (sync blob) + **`profiles`** (login details, auto-filled
+  on signup via `on_auth_user_created` trigger from `auth.users`), both with RLS (own-row only).
+  Note: the pre-existing `profiles` table was dropped+recreated (was causing a `column "id" does not
+  exist` error). `schema.sql` is in the repo but **NOT yet committed** (created after the push).
+- **Google auth verified working** on `localhost:5179` (real keys in `.env.local`).
+
+## ▶ TOMORROW — finish PROD (Vercel), then done
+1. **Vercel → broke-app → Settings → Environment Variables** (Production + Preview): add
+   `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_MIXPANEL_TOKEN` (copy raw from `.env.local`).
+   - The Env Vars page is under the **project's Settings**, not account settings; direct URL:
+     `https://vercel.com/<account>/broke-app/settings/environment-variables`.
+   - Or CLI: `npm i -g vercel` → `vercel login` (interactive, user does it) → then agent can
+     `vercel link` + add vars piped from `.env.local` + redeploy.
+2. **Redeploy** (env only applies to new builds — Vite bakes them in at build time).
+3. **Supabase → Auth → URL Configuration → Redirect URLs**: add `https://broke-app-five.vercel.app/**`
+   (Site URL stays one value). Google Cloud redirect URI unchanged (Supabase callback).
+4. Verify live login at `https://broke-app-five.vercel.app` in a normal browser → Me shows email.
+5. Optional: commit `supabase/schema.sql` to the repo.
+
+## Also still open (unchanged, lower priority)
+- Phone OTP (deferred), share-bg text-clean n/a now, delete orphaned `PaywallSheet`/`ProLock`,
+  small polish (₹0 empty burn bar, doubled BROKE? wordmark on Today, optional dark mode).

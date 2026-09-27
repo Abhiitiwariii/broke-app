@@ -40,7 +40,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   return (
     <div
       className="fixed inset-0 z-[200] flex flex-col bg-bg"
-      style={{ backgroundImage: 'radial-gradient(#16130e 0.5px, transparent 0.6px)', backgroundSize: '3px 3px' }}
+      style={{ backgroundImage: 'radial-gradient(#ffffff0d 0.5px, transparent 0.6px)', backgroundSize: '3px 3px' }}
     >
       {/* Masthead */}
       <div className="px-6 pt-8">
@@ -56,7 +56,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       <div className="flex flex-1 flex-col px-6 pt-6">
         <div className="mb-5 flex gap-1.5">
           {[0, 1, 2].map((i) => (
-            <div key={i} className={['h-1.5 flex-1', i <= step ? 'bg-danger' : 'bg-paper/15'].join(' ')} />
+            <div key={i} className={['h-1.5 flex-1 rounded-full', i <= step ? 'brand-fill' : 'bg-paper/15'].join(' ')} />
           ))}
         </div>
 
@@ -86,7 +86,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                 <div>
                   <div className="mb-2 flex items-center justify-between">
                     <span className="font-display text-xs font-black uppercase tracking-wide text-paper/60">Savings goal</span>
-                    <div className="flex border-[1.5px] border-paper">
+                    <div className="flex overflow-hidden rounded-full border border-line">
                       <ModeBtn active={mode === 'percent'} onClick={() => setMode('percent')} label="%" />
                       <ModeBtn active={mode === 'amount'} onClick={() => setMode('amount')} label="₹" />
                     </div>
@@ -146,7 +146,7 @@ function ModeBtn({ active, onClick, label }: { active: boolean; onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      className={['px-3 py-1 font-display text-sm font-black uppercase', active ? 'bg-paper text-ink' : 'bg-elev text-paper/55'].join(' ')}
+      className={['px-3 py-1 font-display text-sm font-black uppercase', active ? 'brand-fill text-white' : 'bg-elev text-paper/55'].join(' ')}
     >
       {label}
     </button>

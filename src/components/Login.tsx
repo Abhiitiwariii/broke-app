@@ -26,10 +26,9 @@ export function Login({ onSkip }: { onSkip: () => void }) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-bg p-5"
-      style={{ backgroundImage: 'radial-gradient(#16130e 0.5px, transparent 0.6px)', backgroundSize: '3px 3px' }}
+      className="hero-mesh fixed inset-0 z-50 flex items-center justify-center bg-bg p-5"
     >
-      <div className="w-full max-w-[380px]">
+      <div className="relative z-10 w-full max-w-[380px]">
         {/* Masthead */}
         <div className="grad-text font-display text-[52px] font-black uppercase leading-[0.82]">
           Broke<span className="text-danger">?</span>
@@ -51,7 +50,7 @@ export function Login({ onSkip }: { onSkip: () => void }) {
             type="button"
             onClick={google}
             disabled={busy}
-            className="mt-5 flex w-full items-center justify-center gap-2 border-[1.5px] border-paper bg-elev px-5 py-4 font-display font-black uppercase tracking-tight shadow-[3px_3px_0_0_var(--color-paper)] disabled:opacity-40"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full border border-line bg-elev px-5 py-4 font-display font-black uppercase tracking-tight glow-brand disabled:opacity-40"
           >
             <GoogleG /> {busy ? 'Redirecting…' : 'Continue with Google'}
           </button>
