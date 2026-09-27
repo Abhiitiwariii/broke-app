@@ -7,9 +7,9 @@ import {
   getProfile,
   getDebts,
   getCheckins,
-  exportAllData,
   deleteAllData,
 } from '../lib/storage'
+import { exportDataToExcel } from '../lib/exportExcel'
 import type { RoastTone } from '../lib/tone'
 import { dailyAllowance, spentOn, todayKey } from '../lib/daily'
 import { inr } from '../lib/format'
@@ -62,12 +62,7 @@ export function Me() {
 
   function exportData() {
     try {
-      const blob = new Blob([JSON.stringify(exportAllData(), null, 2)], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.download = `broke-data-${new Date().toISOString().slice(0, 10)}.json`
-      link.href = url; link.click()
-      URL.revokeObjectURL(url)
+      exportDataToExcel()
     } catch { window.alert('Could not export right now. Try again.') }
   }
 
@@ -171,7 +166,7 @@ export function Me() {
           Browse free. Sign in to save — we keep minimal PII, encrypt it at rest, and you can export or delete everything any time.
         </p>
         <button type="button" onClick={exportData} className="mt-3 inline-flex items-center gap-1.5 font-display text-xs font-black uppercase tracking-wide text-pop">
-          <Download className="h-3.5 w-3.5" /> Export my data (JSON)
+          <Download className="h-3.5 w-3.5" /> Export my data (Excel)
         </button>
       </div>
 
