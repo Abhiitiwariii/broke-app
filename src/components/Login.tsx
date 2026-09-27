@@ -6,7 +6,7 @@ import { track } from '../lib/analytics'
 const isLocalhost =
   typeof window !== 'undefined' && /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
 
-/** Login wall: Google OAuth. Shown after onboarding, before the app. */
+/** Login wall: Google OAuth. Shown first — before onboarding and the app. */
 export function Login({ onSkip }: { onSkip: () => void }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -26,7 +26,7 @@ export function Login({ onSkip }: { onSkip: () => void }) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="hero-mesh fixed inset-0 z-50 flex items-center justify-center bg-bg p-5"
+      className="hero-mesh fixed! inset-0 z-50 flex items-start justify-center overflow-y-auto! bg-bg p-5 pt-[12vh]"
     >
       <div className="relative z-10 w-full max-w-[380px]">
         {/* Masthead */}

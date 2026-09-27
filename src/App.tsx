@@ -73,6 +73,9 @@ export default function App() {
 
   const resolving = isSupabaseConfigured && session === undefined
   const needsLogin = isSupabaseConfigured && session === null && !devBypass
+  // Login gates everything: people sign in first, then onboard, then use the app.
+  const showLogin = !resolving && needsLogin
+  const showOnboarding = !resolving && !needsLogin && !onboarded
 
   return (
     <RouterProvider>
@@ -81,7 +84,9 @@ export default function App() {
           <CurrentScreen />
         </AppShell>
 
-        {!onboarded && (
+        {showLogin && <Login onSkip={() => setDevBypass(true)} />}
+
+        {showOnboarding && (
           <Onboarding
             onDone={() => {
               setOnboarded(true)
@@ -89,8 +94,6 @@ export default function App() {
             }}
           />
         )}
-
-        {onboarded && !resolving && needsLogin && <Login onSkip={() => setDevBypass(true)} />}
       </ProProvider>
     </RouterProvider>
   )
